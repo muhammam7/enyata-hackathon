@@ -827,8 +827,63 @@ const styles = `
 
   .jr-view-btn:hover { background: #ddd6fe; }
 
-  @media (max-width: 1100px) {
-    .jr-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  /* ── JOB REQUEST DETAIL ── */
+  .jrd-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px; max-width: 860px;
+  }
+
+  .jrd-hero { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 28px; }
+  .jrd-avatar {
+    width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--white);
+    background: linear-gradient(135deg, #6c3ce1, #4e22c4);
+  }
+  .jrd-hero-info { flex: 1; }
+  .jrd-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px; }
+  .jrd-role { font-size: 14px; color: var(--purple-bright); font-weight: 600; margin-top: 2px; }
+  .jrd-desc { font-size: 13.5px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; }
+
+  .jrd-status-pill { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .jrd-status-pill.accepted { background: var(--green-light); color: #15803d; }
+  .jrd-status-pill.pending { background: #fff7ed; color: #c2410c; }
+  .jrd-status-pill.declined { background: #fef2f2; color: #b91c1c; }
+
+  .jrd-meta {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    overflow: hidden; margin-bottom: 22px; background: #fafafa;
+  }
+
+  .jrd-meta-cell { padding: 18px 20px; border-right: 1px solid var(--border); }
+  .jrd-meta-cell:last-child { border-right: none; }
+  .jrd-meta-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
+  .jrd-meta-value { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--text-dark); }
+
+  .jrd-response {
+    background: var(--purple-light); border: 1px solid #d8ccff;
+    border-radius: var(--radius-sm); padding: 20px 22px; margin-bottom: 24px;
+  }
+
+  .jrd-response-label { font-size: 12px; font-weight: 700; color: var(--purple-bright); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .jrd-response-text { font-size: 14px; color: var(--text-dark); line-height: 1.65; }
+  .jrd-response-empty { font-size: 13.5px; color: var(--text-muted); font-style: italic; }
+
+  .jrd-make-payment-btn {
+    width: 100%; max-width: 540px; height: 52px;
+    background: var(--purple-btn); color: var(--white); border: none;
+    border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
+    display: block;
+  }
+
+  .jrd-make-payment-btn:hover { background: #6a40e0; box-shadow: 0 6px 20px rgba(108,60,225,0.3); }
+  .jrd-make-payment-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+  .jrd-declined-note {
+    background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-sm);
+    padding: 14px 18px; font-size: 13.5px; color: #b91c1c; line-height: 1.5;
   }
 
   @media (max-width: 768px) {
@@ -842,6 +897,74 @@ const styles = `
     .topbar { padding: 16px 20px; }
     .creators-grid { grid-template-columns: 1fr; }
   }
+
+  /* ── BUSINESS PROFILE PAGE ── */
+  .biz-profile-subtitle { font-size: 13.5px; color: var(--text-muted); margin-bottom: 28px; }
+
+  .bp-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px 32px; margin-bottom: 20px;
+  }
+
+  .bp-hero { display: flex; align-items: flex-start; gap: 20px; }
+
+  .bp-avatar {
+    width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--white);
+    background: linear-gradient(135deg, #6c3ce1, #4e22c4);
+  }
+
+  .bp-hero-info { flex: 1; }
+  .bp-company-name { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.4px; }
+  .bp-industry { font-size: 14px; color: var(--purple-bright); font-weight: 600; margin-top: 4px; }
+  .bp-desc { font-size: 14px; color: var(--text-muted); margin-top: 10px; line-height: 1.65; max-width: 680px; }
+
+  .bp-section-title {
+    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--text-dark);
+    padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 22px;
+  }
+
+  .bp-info-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+
+  .bp-info-cell {
+    padding: 6px 24px 16px 0; margin-right: 0;
+    border-right: 1px solid var(--border); padding-right: 24px; margin-right: 24px;
+  }
+  .bp-info-cell:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .bp-info-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .bp-info-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
+  .bp-info-value { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+  .bp-info-value.link { color: var(--purple-bright); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+  .bp-activity-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+
+  .bp-activity-cell {
+    padding: 4px 32px 4px 0; border-right: 1px solid var(--border); margin-right: 32px;
+  }
+  .bp-activity-cell:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .bp-activity-label { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+  .bp-activity-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px; }
+
+  .bp-edit-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--purple-btn); color: var(--white); border: none; border-radius: 50px;
+    padding: 11px 22px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, box-shadow 0.2s; margin-top: 20px;
+    position: relative; overflow: hidden;
+  }
+  .bp-edit-btn:hover { background: #6a40e0; box-shadow: 0 4px 16px rgba(108,60,225,0.25); }
+
+  .topbar-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #6c3ce1, #4e22c4);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; color: var(--white);
+    cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s;
+    border: 2.5px solid transparent; flex-shrink: 0;
+  }
+  .topbar-avatar:hover { box-shadow: 0 0 0 3px var(--purple-light); border-color: var(--purple-bright); }
+  .topbar-avatar.active { box-shadow: 0 0 0 3px var(--purple-light); border-color: var(--purple-bright); }
 `;
 
 const activity = [
@@ -1605,23 +1728,265 @@ function PostBrief({ onBack, onSuccess }) {
   );
 }
 
+/* ── BUSINESS PROFILE PAGE ── */
+function BusinessProfile() {
+  return (
+    <div className="content">
+      <p className="biz-profile-subtitle">This is how creators see your business on Vynder</p>
+
+      {/* Hero card */}
+      <div className="bp-card">
+        <div className="bp-hero">
+          <div className="bp-avatar">TC</div>
+          <div className="bp-hero-info">
+            <div className="bp-company-name">TechCorp Nigeria</div>
+            <div className="bp-industry">Technology / Software · Lagos</div>
+            <div className="bp-desc">
+              We build innovative digital products for African markets. We work regularly with creators for product launches, social content, and brand campaigns.
+            </div>
+          </div>
+        </div>
+        <button className="bp-edit-btn" onClick={createRipple}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Profile
+        </button>
+      </div>
+
+      {/* Company Info card */}
+      <div className="bp-card">
+        <div className="bp-section-title">Company Info</div>
+        <div className="bp-info-grid">
+          <div className="bp-info-cell">
+            <div className="bp-info-label">Contact Person</div>
+            <div className="bp-info-value">Emeka Okafor</div>
+          </div>
+          <div className="bp-info-cell">
+            <div className="bp-info-label">Work Email</div>
+            <div className="bp-info-value">techcorp@gmail.com</div>
+          </div>
+          <div className="bp-info-cell">
+            <div className="bp-info-label">Industry</div>
+            <div className="bp-info-value">Technology / Software</div>
+          </div>
+          <div className="bp-info-cell">
+            <div className="bp-info-label">Company Size</div>
+            <div className="bp-info-value">11–50 employees</div>
+          </div>
+          <div className="bp-info-cell">
+            <div className="bp-info-label">Location</div>
+            <div className="bp-info-value">Victoria Island, Lagos</div>
+          </div>
+        </div>
+
+        <div className="bp-info-row">
+          <div className="bp-info-cell" style={{ border: "none", margin: 0, padding: 0 }}>
+            <div className="bp-info-label">Website</div>
+            <div className="bp-info-value link">techcorp.ng</div>
+          </div>
+          <div className="bp-info-cell" style={{ border: "none", margin: 0, padding: 0 }}>
+            <div className="bp-info-label">CAC Number</div>
+            <div className="bp-info-value">techcorp@gmail.com</div>
+          </div>
+          <div className="bp-info-cell" style={{ border: "none", margin: 0, padding: 0 }}>
+            <div className="bp-info-label">Member Since</div>
+            <div className="bp-info-value">Jan 2026</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hiring Activity card */}
+      <div className="bp-card">
+        <div className="bp-section-title">Hiring Activity</div>
+        <div className="bp-activity-grid">
+          <div className="bp-activity-cell">
+            <div className="bp-activity-label">Total Projects</div>
+            <div className="bp-activity-value">9</div>
+          </div>
+          <div className="bp-activity-cell">
+            <div className="bp-activity-label">Creators Hired</div>
+            <div className="bp-activity-value">5</div>
+          </div>
+          <div className="bp-activity-cell">
+            <div className="bp-activity-label">Total Spent</div>
+            <div className="bp-activity-value">₦685,000</div>
+          </div>
+          <div className="bp-activity-cell">
+            <div className="bp-activity-label">Active Briefs</div>
+            <div className="bp-activity-value">4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── JOB REQUESTS DATA ── */
 const jobRequestsData = [
-  { id: 1, creator: "Amara Okon", project: "Product Launch Video", amount: "₦120,000", status: "accepted", date: "Mar 15, 2026" },
-  { id: 2, creator: "Chidi Eze", project: "Brand Photography", amount: "₦85,000", status: "accepted", date: "Mar 10, 2026" },
-  { id: 3, creator: "Funmi Adeyemi", project: "Monthly Social Content", amount: "₦60,000", status: "pending", date: "Mar 12, 2026" },
-  { id: 4, creator: "Kola Mensah", project: "Website Copywriting", amount: "₦50,000", status: "pending", date: "Mar 8, 2026" },
-  { id: 5, creator: "Adaeze Nwosu", project: "Product Launch Video", amount: "₦150,000", status: "declined", date: "Mar 6, 2026" },
-  { id: 6, creator: "Taiwo James", project: "Brand Animation", amount: "₦90,000", status: "accepted", date: "Mar 3, 2026" },
-  { id: 7, creator: "Amara Okon", project: "Q2 Social Media Pack", amount: "₦75,000", status: "declined", date: "Feb 28, 2026" },
-  { id: 8, creator: "Kola Mensah", project: "Email Campaign Copy", amount: "₦35,000", status: "pending", date: "Feb 25, 2026" },
-  { id: 9, creator: "Chidi Eze", project: "Event Photography", amount: "₦65,000", status: "pending", date: "Feb 20, 2026" },
+  { id: 1, initials: "AO", creator: "Amara Okon", role: "Videographer", desc: "Lagos-based videographer specialising in product launches and brand films.", project: "Product Launch Video", amount: "₦120,000", status: "accepted", date: "Mar 15, 2026", response: "Hi TechCorp, I have 3 similar product launches in my portfolio. Available from April 20." },
+  { id: 2, initials: "CE", creator: "Chidi Eze", role: "Photographer", desc: "Commercial and lifestyle photographer with 5+ years experience across Nigeria.", project: "Brand Photography", amount: "₦85,000", status: "accepted", date: "Mar 10, 2026", response: "Happy to take this on — I worked on similar brand shoots for two fintech brands recently. Let's connect." },
+  { id: 3, initials: "FA", creator: "Funmi Adeyemi", role: "Social Media Manager", desc: "Manages content strategy and execution for 10+ brands monthly.", project: "Monthly Social Content", amount: "₦60,000", status: "pending", date: "Mar 12, 2026", response: "" },
+  { id: 4, initials: "KM", creator: "Kola Mensah", role: "Copywriter", desc: "B2B and consumer copywriter. Writes website copy and brand messaging that converts.", project: "Website Copywriting", amount: "₦50,000", status: "pending", date: "Mar 8, 2026", response: "" },
+  { id: 5, initials: "AN", creator: "Adaeze Nwosu", role: "Graphic Designer", desc: "Brand identity and digital design specialist for startups and established brands.", project: "Product Launch Video", amount: "₦150,000", status: "declined", date: "Mar 6, 2026", response: "Thank you for reaching out. I'm fully booked through May and can't commit to this timeline." },
+  { id: 6, initials: "TJ", creator: "Taiwo James", role: "Animator", desc: "2D animator and motion graphics designer for tech brands and social ads.", project: "Brand Animation", amount: "₦90,000", status: "accepted", date: "Mar 3, 2026", response: "Excited about this project! I've done similar 2D brand animations — let's align on the style guide." },
+  { id: 7, initials: "AO", creator: "Amara Okon", role: "Videographer", desc: "Lagos-based videographer specialising in product launches and brand films.", project: "Q2 Social Media Pack", amount: "₦75,000", status: "declined", date: "Feb 28, 2026", response: "I specialise in longer-form video; this project scope isn't the right fit for my style. Apologies." },
+  { id: 8, initials: "KM", creator: "Kola Mensah", role: "Copywriter", desc: "B2B and consumer copywriter. Writes website copy and brand messaging that converts.", project: "Email Campaign Copy", amount: "₦35,000", status: "pending", date: "Feb 25, 2026", response: "" },
+  { id: 9, initials: "CE", creator: "Chidi Eze", role: "Photographer", desc: "Commercial and lifestyle photographer with 5+ years experience across Nigeria.", project: "Event Photography", amount: "₦65,000", status: "pending", date: "Feb 20, 2026", response: "" },
 ];
+
+/* ── PAYMENT MODAL FOR JOB REQUEST (pre-fills creator + amount) ── */
+function PaymentModalForRequest({ request, onClose }) {
+  const [step, setStep] = useState(2); // skip to method since details are pre-filled
+  const [result, setResult] = useState(null);
+  const [txRef] = useState(genRef());
+  const [method, setMethod] = useState("");
+  const [card, setCard] = useState({ number: "", expiry: "", cvv: "", name: "" });
+  const [cardErrors, setCardErrors] = useState({});
+
+  const amount = parseFloat(request.amount.replace(/[₦,]/g, "")) || 0;
+  const fee = Math.round(amount * VYNDER_FEE_RATE);
+  const total = amount + fee;
+
+  const validateMethod = () => {
+    if (!method) return { method: "Please select a payment method" };
+    const e = {};
+    if (method === "card" || method === "interswitch") {
+      if (card.number.replace(/\s/g,"").length < 16) e.number = "Enter a valid 16-digit card number";
+      if (!card.expiry || card.expiry.length < 5) e.expiry = "Enter expiry (MM/YY)";
+      if (!card.cvv || card.cvv.length < 3) e.cvv = "Enter CVV";
+      if (!card.name.trim()) e.name = "Enter cardholder name";
+    }
+    return e;
+  };
+
+  const handlePay = (e) => {
+    const errs = validateMethod();
+    if (Object.keys(errs).length) { setCardErrors(errs); return; }
+    createRipple(e);
+    setStep(3);
+    setTimeout(() => { setResult(Math.random() > 0.2 ? "success" : "failure"); setStep(4); }, 2800);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && step !== 3 && onClose()}>
+      <div className="modal">
+        {step === 2 && (
+          <div className="modal-step">
+            <div className="modal-header">
+              <span className="modal-title">Make Payment</span>
+              <button className="modal-close" onClick={onClose}>×</button>
+            </div>
+            <p className="modal-subtitle">
+              Paying <strong>{request.creator}</strong> for <strong>{request.project}</strong>
+              <br/>Total: <strong style={{ color: "var(--purple-bright)" }}>₦{total.toLocaleString()}</strong>
+            </p>
+            <div className="interswitch-badge">
+              <div className="interswitch-logo">INTERSWITCH</div>
+              <span className="interswitch-text">Secured by Interswitch — Nigeria's trusted payment infrastructure</span>
+            </div>
+            <div className="payment-methods">
+              {[
+                { id: "interswitch", cls: "interswitch", label: "ISWIN", name: "Interswitch (Verve / Mastercard)", desc: "Pay securely via Interswitch gateway" },
+                { id: "card", cls: "card", label: "VISA", name: "Debit / Credit Card", desc: "Visa, Mastercard, or Verve card" },
+                { id: "transfer", cls: "transfer", label: "🏦", name: "Bank Transfer", desc: "Transfer to Vynder's designated account" },
+                { id: "ussd", cls: "ussd", label: "*901#", name: "USSD", desc: "Pay via shortcode on any Nigerian network" },
+              ].map((m) => (
+                <div key={m.id} className={`method-option ${method === m.id ? "selected" : ""}`} onClick={() => { setMethod(m.id); setCardErrors({}); }}>
+                  <div className="method-radio"><div className="method-radio-inner" /></div>
+                  <div className={`method-icon ${m.cls}`}>{m.label}</div>
+                  <div className="method-info">
+                    <div className="method-name">{m.name}</div>
+                    <div className="method-desc">{m.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {cardErrors.method && <p className="field-error" style={{ marginBottom: 10 }}>⚠ {cardErrors.method}</p>}
+            {(method === "card" || method === "interswitch") && (
+              <div className="card-form">
+                <div className="modal-field" style={{ marginBottom: 0 }}>
+                  <label className="modal-label" style={{ fontSize: 12 }}>Card Number</label>
+                  <input className={`card-input ${cardErrors.number ? "has-error" : ""}`} placeholder="0000 0000 0000 0000" value={card.number} maxLength={19} onChange={(e) => { setCard({ ...card, number: formatCard(e.target.value) }); setCardErrors({ ...cardErrors, number: "" }); }} />
+                  {cardErrors.number && <span className="field-error">⚠ {cardErrors.number}</span>}
+                </div>
+                <div className="card-row">
+                  <div className="modal-field" style={{ marginBottom: 0 }}>
+                    <label className="modal-label" style={{ fontSize: 12 }}>Expiry</label>
+                    <input className={`card-input ${cardErrors.expiry ? "has-error" : ""}`} placeholder="MM/YY" value={card.expiry} maxLength={5} onChange={(e) => { setCard({ ...card, expiry: formatExpiry(e.target.value) }); setCardErrors({ ...cardErrors, expiry: "" }); }} />
+                    {cardErrors.expiry && <span className="field-error">⚠ {cardErrors.expiry}</span>}
+                  </div>
+                  <div className="modal-field" style={{ marginBottom: 0 }}>
+                    <label className="modal-label" style={{ fontSize: 12 }}>CVV</label>
+                    <input className={`card-input ${cardErrors.cvv ? "has-error" : ""}`} placeholder="•••" type="password" value={card.cvv} maxLength={4} onChange={(e) => { setCard({ ...card, cvv: e.target.value.replace(/\D/g,"").slice(0,4) }); setCardErrors({ ...cardErrors, cvv: "" }); }} />
+                    {cardErrors.cvv && <span className="field-error">⚠ {cardErrors.cvv}</span>}
+                  </div>
+                </div>
+                <div className="modal-field" style={{ marginBottom: 0 }}>
+                  <label className="modal-label" style={{ fontSize: 12 }}>Cardholder Name</label>
+                  <input className={`card-input ${cardErrors.name ? "has-error" : ""}`} placeholder="Name on card" value={card.name} onChange={(e) => { setCard({ ...card, name: e.target.value }); setCardErrors({ ...cardErrors, name: "" }); }} />
+                  {cardErrors.name && <span className="field-error">⚠ {cardErrors.name}</span>}
+                </div>
+                <div className="secure-note">🔒 Card details are encrypted end-to-end and never stored by Vynder</div>
+              </div>
+            )}
+            {method === "transfer" && (
+              <div className="card-form" style={{ textAlign: "center", gap: 6 }}>
+                <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Transfer exactly ₦{total.toLocaleString()} to:</p>
+                <p style={{ fontSize: 15, fontWeight: 700, color: "var(--text-dark)" }}>Vynder Payments Ltd</p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "var(--purple-bright)", letterSpacing: "0.1em", fontFamily: "monospace" }}>0123 456 7890</p>
+                <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Zenith Bank · Use ref: <strong>{txRef}</strong></p>
+              </div>
+            )}
+            {method === "ussd" && (
+              <div className="card-form" style={{ textAlign: "center", gap: 6 }}>
+                <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Dial this code on your phone:</p>
+                <p style={{ fontSize: 22, fontWeight: 800, color: "var(--purple-bright)", fontFamily: "monospace" }}>*322*072*{Math.floor(Math.random()*900000+100000)}#</p>
+                <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Works on MTN, Airtel, Glo, 9mobile · Amount: ₦{total.toLocaleString()}</p>
+              </div>
+            )}
+            <div className="modal-btn-row" style={{ marginTop: 18 }}>
+              <button className="modal-btn-secondary" onClick={onClose}>Cancel</button>
+              <button className="modal-submit" onClick={handlePay}>Pay ₦{total.toLocaleString()} →</button>
+            </div>
+          </div>
+        )}
+        {step === 3 && (
+          <div className="processing-screen">
+            <div className="spinner" />
+            <p className="processing-title">Processing Payment...</p>
+            <p className="processing-sub">Please do not close this window.<br />Verifying with Interswitch secure gateway.</p>
+          </div>
+        )}
+        {step === 4 && result === "success" && (
+          <div className="result-screen">
+            <div className="result-icon success">✓</div>
+            <h3 className="result-title">Payment Successful!</h3>
+            <p className="result-sub">₦{total.toLocaleString()} has been sent to {request.creator}. They'll be notified immediately.</p>
+            <div className="result-ref">Transaction Ref: {txRef}</div>
+            <button className="result-btn" onClick={onClose}>Done</button>
+            <button className="result-btn-outline" onClick={onClose}>View Transaction History</button>
+          </div>
+        )}
+        {step === 4 && result === "failure" && (
+          <div className="result-screen">
+            <div className="result-icon failure">✕</div>
+            <h3 className="result-title">Payment Failed</h3>
+            <p className="result-sub">We couldn't process your payment. Please check your card details or try another method.</p>
+            <div className="result-ref">Failed Ref: {txRef}</div>
+            <button className="result-btn" onClick={() => { setResult(null); setCard({ number:"", expiry:"", cvv:"", name:"" }); setCardErrors({}); setStep(2); }}>Try Again</button>
+            <button className="result-btn-outline" onClick={onClose}>Cancel</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 /* ── JOB REQUESTS PAGE ── */
 function JobRequests() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selected, setSelected] = useState(null);
+  const [showPayment, setShowPayment] = useState(false);
 
   const filtered = jobRequestsData.filter(r => {
     const matchSearch = !search ||
@@ -1636,45 +2001,93 @@ function JobRequests() {
   const pending = jobRequestsData.filter(r => r.status === "pending").length;
   const declined = jobRequestsData.filter(r => r.status === "declined").length;
 
+  // ── DETAIL VIEW ──
+  if (selected) {
+    return (
+      <div className="content">
+        <button className="back-btn" onClick={() => setSelected(null)}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Job Requests
+        </button>
+
+        <div className="jrd-card">
+          <div className="jrd-hero">
+            <div className="jrd-avatar">{selected.initials}</div>
+            <div className="jrd-hero-info">
+              <div className="jrd-name">{selected.creator}</div>
+              <div className="jrd-role">{selected.role}</div>
+              <div className="jrd-desc">{selected.desc}</div>
+            </div>
+            <span className={`jrd-status-pill ${selected.status}`}>
+              {selected.status.charAt(0).toUpperCase() + selected.status.slice(1)}
+            </span>
+          </div>
+
+          <div className="jrd-meta">
+            <div className="jrd-meta-cell">
+              <div className="jrd-meta-label">Project</div>
+              <div className="jrd-meta-value" style={{ fontSize: 15, fontWeight: 700 }}>{selected.project}</div>
+            </div>
+            <div className="jrd-meta-cell">
+              <div className="jrd-meta-label">Budget Offered</div>
+              <div className="jrd-meta-value">{selected.amount}</div>
+            </div>
+            <div className="jrd-meta-cell">
+              <div className="jrd-meta-label">Request Sent</div>
+              <div className="jrd-meta-value" style={{ fontSize: 15 }}>{selected.date}</div>
+            </div>
+          </div>
+
+          <div className="jrd-response">
+            <div className="jrd-response-label">Creator's Response</div>
+            {selected.response
+              ? <p className="jrd-response-text">{selected.response}</p>
+              : <p className="jrd-response-empty">No response yet — the creator hasn't replied to this request.</p>
+            }
+          </div>
+
+          {selected.status === "accepted" && (
+            <button className="jrd-make-payment-btn" onClick={(e) => { createRipple(e); setShowPayment(true); }}>
+              Make Payment
+            </button>
+          )}
+          {selected.status === "pending" && (
+            <button className="jrd-make-payment-btn" disabled>Awaiting Creator Response</button>
+          )}
+          {selected.status === "declined" && (
+            <div className="jrd-declined-note">
+              ✕ This creator declined your request. You can browse for another creator with a similar skill set.
+            </div>
+          )}
+        </div>
+
+        {showPayment && (
+          <PaymentModalForRequest request={selected} onClose={() => setShowPayment(false)} />
+        )}
+      </div>
+    );
+  }
+
+  // ── LIST VIEW ──
   return (
     <div className="content">
       <div className="jr-stats-grid">
-        <div className="jr-stat-card">
-          <div>
-            <div className="jr-stat-label">Total Sent</div>
-            <div className="jr-stat-value">{total}</div>
+        {[
+          { label: "Total Sent", value: total, cls: "total", icon: <><polyline points="20 6 9 17 4 12"/></>, stroke: "#3b82f6" },
+          { label: "Accepted", value: accepted, cls: "accepted", icon: <><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>, stroke: "#22c55e" },
+          { label: "Pending", value: pending, cls: "pending", icon: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>, stroke: "#f97316" },
+          { label: "Declined", value: declined, cls: "declined", icon: <><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></>, stroke: "#ef4444" },
+        ].map((s) => (
+          <div className="jr-stat-card" key={s.label}>
+            <div>
+              <div className="jr-stat-label">{s.label}</div>
+              <div className="jr-stat-value">{s.value}</div>
+            </div>
+            <div className={`jr-stat-icon ${s.cls}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={s.stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{s.icon}</svg>
+            </div>
           </div>
-          <div className="jr-stat-icon total">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-        </div>
-        <div className="jr-stat-card">
-          <div>
-            <div className="jr-stat-label">Accepted</div>
-            <div className="jr-stat-value">{accepted}</div>
-          </div>
-          <div className="jr-stat-icon accepted">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-        </div>
-        <div className="jr-stat-card">
-          <div>
-            <div className="jr-stat-label">Pending</div>
-            <div className="jr-stat-value">{pending}</div>
-          </div>
-          <div className="jr-stat-icon pending">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-        </div>
-        <div className="jr-stat-card">
-          <div>
-            <div className="jr-stat-label">Declined</div>
-            <div className="jr-stat-value">{declined}</div>
-          </div>
-          <div className="jr-stat-icon declined">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          </div>
-        </div>
+        ))}
       </div>
 
       <div className="jr-toolbar">
@@ -1713,14 +2126,10 @@ function JobRequests() {
                 <td style={{ fontWeight: 600 }}>{r.creator}</td>
                 <td style={{ color: "var(--text-muted)" }}>{r.project}</td>
                 <td style={{ fontWeight: 600 }}>{r.amount}</td>
-                <td>
-                  <span className={`jr-status-pill ${r.status}`}>
-                    {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
-                  </span>
-                </td>
+                <td><span className={`jr-status-pill ${r.status}`}>{r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span></td>
                 <td style={{ color: "var(--text-muted)" }}>{r.date}</td>
                 <td style={{ textAlign: "center" }}>
-                  <button className="jr-view-btn">View Details</button>
+                  <button className="jr-view-btn" onClick={() => setSelected(r)}>View Details</button>
                 </td>
               </tr>
             ))}
@@ -1828,7 +2237,7 @@ export default function App() {
     profile: { title: selectedCreator?.name || "Creator Profile", subtitle: `${selectedCreator?.role || ""} · ${selectedCreator?.location || ""}` },
     briefs: { title: "My Briefs", subtitle: "All job briefs you have posted" },
     "post-brief": { title: "Post a New Brief", subtitle: "Tell creators what you need. Be as specific as possible for better matches." },
-    jobs: { title: "Job Requests", subtitle: "Track requests sent to creators and their responses" },
+    "business-profile": { title: "Business Profile", subtitle: "This is how creators see your business on Vynder" },
     messages: { title: "Messages", subtitle: "Your conversations with creators" },
     notifications: { title: "Notifications", subtitle: "Stay updated on your projects" },
     transactions: { title: "Transaction History", subtitle: "All your payment records" },
@@ -1862,11 +2271,11 @@ export default function App() {
                 </svg>
                 <div className="notif-dot" />
               </div>
-              <div className="icon-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
-              </div>
+              <div
+                className={`topbar-avatar ${page === "business-profile" ? "active" : ""}`}
+                onClick={() => setPage("business-profile")}
+                title="Business Profile"
+              >TC</div>
             </div>
           </div>
 
@@ -2006,6 +2415,9 @@ export default function App() {
               onSendRequest={handleSendRequest}
             />
           )}
+
+          {/* BUSINESS PROFILE */}
+          {page === "business-profile" && <BusinessProfile />}
 
           {/* JOB REQUESTS */}
           {page === "jobs" && <JobRequests />}
