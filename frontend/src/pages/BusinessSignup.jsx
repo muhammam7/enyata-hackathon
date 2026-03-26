@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -397,6 +397,7 @@ const styles = `
 `;
 
 export default function BusinessSignup({ onNext }) {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     address: "",
     website: "",
@@ -478,7 +479,7 @@ export default function BusinessSignup({ onNext }) {
 
         {/* RIGHT */}
         <div className="right-panel">
-          <div className="back-link" onClick={() => {}}>
+          <div className="back-link" onClick={() => navigate("/")}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -595,7 +596,7 @@ export default function BusinessSignup({ onNext }) {
             </button>
 
             <p className="signin-row">
-              Already have an account? <a href="#">Sign In</a>
+              Already have an account? <a onClick={() => navigate("/business/dashboard")} style={{cursor:"pointer"}}>Sign In</a>
             </p>
           </div>
         </div>

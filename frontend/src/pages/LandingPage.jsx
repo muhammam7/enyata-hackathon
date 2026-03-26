@@ -1,21 +1,16 @@
 import { useState, } from "react";
-import CreatorSignupStepOne from "./CreatorSignupStepOne";
-import CreatorSignupStepTwo from "./CreatorSignupStepTwo";
-import BusinessSignupStepOne from "./BusinessSignupStepOne";
-import BusinessSignup from "./BusinessSignup"; // step 2
-import CreatorSignIn from "./CreatorSignIn";
-import ForgotPassword from "./ForgotPassword";
-import EnterOTP from "./EnterOTP";
-import ResetPassword from "./ResetPassword";
+import { useNavigate } from "react-router-dom";
 
-/*
-  Screens:
-  "landing"
-  "creator-signup-1" | "creator-signup-2"
-  "business-signup-1" | "business-signup-2"
-  "creator-signin" | "forgot" | "otp" | "reset"
-  "business-signin"   → just navigates to Dashboard externally via onDashboard prop
-*/
+export default function LandingPage({ onDashboard }) {
+  const navigate = useNavigate();
+
+  const goToDashboard = () => {
+    if (onDashboard) {
+      onDashboard();
+    } else {
+      navigate("/business/dashboard");
+    }
+  };
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
@@ -617,192 +612,6 @@ const styles = `
     color: var(--text-muted);
   }
 
-  /* ---- BUSINESS SIGNIN (inline, no split panel) ---- */
-  .biz-signin-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 10, 30, 0.6);
-    backdrop-filter: blur(8px);
-    z-index: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.25s ease;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .biz-signin-card {
-    background: var(--white);
-    border-radius: 20px;
-    padding: 44px 40px;
-    width: 100%;
-    max-width: 440px;
-    box-shadow: 0 24px 80px rgba(91,33,182,0.2);
-    animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    position: relative;
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(40px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  .biz-close {
-    position: absolute;
-    top: 16px; right: 18px;
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: var(--text-muted);
-    line-height: 1;
-    transition: color 0.2s;
-  }
-
-  .biz-close:hover { color: var(--text); }
-
-  .biz-signin-logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .biz-signin-logo-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--purple);
-  }
-
-  .biz-signin-logo-badge {
-    background: var(--purple-soft);
-    color: var(--purple);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-  }
-
-  .biz-signin-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--text);
-    letter-spacing: -0.8px;
-    margin-bottom: 6px;
-  }
-
-  .biz-signin-sub {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 28px;
-  }
-
-  .biz-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-bottom: 16px;
-  }
-
-  .biz-label {
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .biz-input {
-    height: 44px;
-    border: 1.5px solid #e5e1f0;
-    border-radius: 9px;
-    background: #faf9ff;
-    padding: 0 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
-  }
-
-  .biz-input:focus {
-    border-color: var(--purple-bright);
-    box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
-    background: var(--white);
-  }
-
-  .biz-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
-
-  .biz-input-wrap { position: relative; }
-  .biz-input-wrap .biz-input { padding-right: 44px; }
-
-  .biz-eye {
-    position: absolute;
-    right: 13px; top: 50%;
-    transform: translateY(-50%);
-    background: none; border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    display: flex; align-items: center;
-    padding: 0;
-    transition: color 0.2s;
-  }
-
-  .biz-eye:hover { color: var(--purple-bright); }
-
-  .biz-forgot {
-    text-align: right;
-    font-size: 12px;
-    color: var(--purple);
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: -10px;
-    margin-bottom: 4px;
-  }
-
-  .biz-forgot:hover { text-decoration: underline; }
-
-  .biz-error { font-size: 11.5px; color: #ef4444; margin-top: 1px; }
-
-  .biz-submit {
-    width: 100%;
-    height: 46px;
-    background: var(--purple-bright);
-    color: var(--white);
-    border: none;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 16px rgba(124,58,237,0.3);
-    margin-top: 8px;
-  }
-
-  .biz-submit:hover { background: var(--purple); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(124,58,237,0.4); }
-  .biz-submit:active { transform: scale(0.977); }
-  .biz-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .biz-switch {
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 16px;
-  }
-
-  .biz-switch a {
-    color: var(--purple);
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .biz-switch a:hover { text-decoration: underline; }
-
   /* ANIMATIONS */
   @keyframes fade-up {
     from { opacity: 0; transform: translateY(24px); }
@@ -831,166 +640,8 @@ const styles = `
     .vl-proof { gap: 0; flex-wrap: wrap; }
     .vl-proof-item { padding: 12px 18px; }
     .vl-proof-item + .vl-proof-item::before { display: none; }
-    .biz-signin-card { padding: 36px 24px; }
   }
 `;
-
-const EyeIcon = ({ open }) => open ? (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-    <circle cx="12" cy="12" r="3"/>
-  </svg>
-) : (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
-    <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
-    <line x1="1" y1="1" x2="23" y2="23"/>
-  </svg>
-);
-
-function BusinessSignIn({ onSuccess, onClose, onSignUp }) {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
-  const [showPwd, setShowPwd] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: "" });
-  };
-
-  const validate = () => {
-    const e = {};
-    if (!form.email.trim()) e.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email";
-    if (!form.password) e.password = "Password is required";
-    return e;
-  };
-
-  const handleSubmit = () => {
-    const newErrors = validate();
-    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
-    setErrors({});
-    setLoading(true);
-    setTimeout(() => { setLoading(false); onSuccess(); }, 1200);
-  };
-
-  return (
-    <div className="biz-signin-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="biz-signin-card">
-        <button className="biz-close" onClick={onClose}>×</button>
-
-        <div className="biz-signin-logo">
-          <span className="biz-signin-logo-name">vynder</span>
-          <span className="biz-signin-logo-badge">Business</span>
-        </div>
-
-        <h2 className="biz-signin-title">Welcome back</h2>
-        <p className="biz-signin-sub">Sign in to your business account</p>
-
-        <div className="biz-field">
-          <label className="biz-label">Work Email</label>
-          <input
-            name="email"
-            type="email"
-            placeholder="you@company.com"
-            value={form.email}
-            onChange={handleChange}
-            className={`biz-input${errors.email ? " error" : ""}`}
-          />
-          {errors.email && <span className="biz-error">⚠ {errors.email}</span>}
-        </div>
-
-        <div className="biz-field">
-          <label className="biz-label">Password</label>
-          <div className="biz-input-wrap">
-            <input
-              name="password"
-              type={showPwd ? "text" : "password"}
-              placeholder="Enter your password"
-              value={form.password}
-              onChange={handleChange}
-              className={`biz-input${errors.password ? " error" : ""}`}
-            />
-            <button className="biz-eye" type="button" onClick={() => setShowPwd(!showPwd)}>
-              <EyeIcon open={showPwd} />
-            </button>
-          </div>
-          {errors.password && <span className="biz-error">⚠ {errors.password}</span>}
-        </div>
-
-        <div className="biz-forgot">Forgot password?</div>
-
-        <button className="biz-submit" onClick={handleSubmit} disabled={loading}>
-          {loading ? "Signing in..." : "Sign In"}
-        </button>
-
-        <p className="biz-switch">
-          No account yet? <a onClick={() => { onClose(); onSignUp(); }}>Create one</a>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-export default function LandingPage({ onDashboard }) {
-  const [screen, setScreen] = useState("landing");
-  const [showBizSignin, setShowBizSignin] = useState(false);
-
-  const go = (s) => setScreen(s);
-
-  // Non-landing screens — render their own full-page components
-  const fullScreens = {
-    "creator-signup-1": (
-      <CreatorSignupStepOne
-        onNext={() => go("creator-signup-2")}
-        onSignIn={() => go("creator-signin")}
-      />
-    ),
-    "creator-signup-2": (
-      <CreatorSignupStepTwo
-        onNext={() => go("creator-signin")}
-      />
-    ),
-    "business-signup-1": (
-      <BusinessSignupStepOne
-        onNext={() => go("business-signup-2")}
-      />
-    ),
-    "business-signup-2": (
-      <BusinessSignup
-        onNext={() => onDashboard && onDashboard()}
-      />
-    ),
-    "creator-signin": (
-      <CreatorSignIn
-        onForgotPassword={() => go("forgot")}
-        onSignUp={() => go("creator-signup-1")}
-      />
-    ),
-    "forgot": (
-      <ForgotPassword
-        onBackToLogin={() => go("creator-signin")}
-        onOTPSent={() => go("otp")}
-      />
-    ),
-    "otp": (
-      <EnterOTP
-        onVerify={() => go("reset")}
-        onBack={() => go("forgot")}
-      />
-    ),
-    "reset": (
-      <ResetPassword
-        onBack={() => go("creator-signin")}
-        onSuccess={() => go("creator-signin")}
-      />
-    ),
-  };
-
-  if (screen !== "landing") {
-    return fullScreens[screen] || null;
-  }
 
   return (
     <>
@@ -1004,13 +655,10 @@ export default function LandingPage({ onDashboard }) {
             <div className="vl-nav-logo-dot" />
           </div>
           <div className="vl-nav-right">
-            <button className="vl-nav-signin" onClick={() => setShowBizSignin(true)}>
+            <button className="vl-nav-signin" onClick={goToDashboard}>
               Sign In
             </button>
-            <button
-              className="vl-nav-cta"
-              onClick={() => document.getElementById("vl-choose").scrollIntoView({ behavior: "smooth" })}
-            >
+            <button className="vl-nav-cta" onClick={goToDashboard}>
               Get Started Free
             </button>
           </div>
@@ -1041,16 +689,13 @@ export default function LandingPage({ onDashboard }) {
             </p>
 
             <div className="vl-hero-btns vl-anim-4">
-              <button
-                className="vl-btn-primary"
-                onClick={() => document.getElementById("vl-choose").scrollIntoView({ behavior: "smooth" })}
-              >
+              <button className="vl-btn-primary" onClick={goToDashboard}>
                 Get Started Free
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                 </svg>
               </button>
-              <button className="vl-btn-ghost" onClick={() => setShowBizSignin(true)}>
+              <button className="vl-btn-ghost" onClick={goToDashboard}>
                 Sign In
               </button>
             </div>
@@ -1138,10 +783,10 @@ export default function LandingPage({ onDashboard }) {
                   ))}
                 </div>
                 <div className="vl-card-btns">
-                  <button className="vl-card-btn-primary" onClick={() => go("business-signup-1")}>
+                  <button className="vl-card-btn-primary" onClick={goToDashboard}>
                     Sign Up as Business
                   </button>
-                  <button className="vl-card-btn-ghost" onClick={() => setShowBizSignin(true)}>
+                  <button className="vl-card-btn-ghost" onClick={goToDashboard}>
                     Log In
                   </button>
                 </div>
@@ -1164,10 +809,10 @@ export default function LandingPage({ onDashboard }) {
                   ))}
                 </div>
                 <div className="vl-card-btns">
-                  <button className="vl-card-btn-primary" onClick={() => go("creator-signup-1")}>
+                  <button className="vl-card-btn-primary" onClick={goToDashboard}>
                     Sign Up as Creator
                   </button>
-                  <button className="vl-card-btn-ghost" onClick={() => go("creator-signin")}>
+                  <button className="vl-card-btn-ghost" onClick={goToDashboard}>
                     Log In as Creator
                   </button>
                 </div>
@@ -1182,15 +827,6 @@ export default function LandingPage({ onDashboard }) {
           <div className="vl-footer-logo">vynder</div>
           <div className="vl-footer-copy">© 2026 Vynder. Made for African creators and businesses.</div>
         </footer>
-
-        {/* BUSINESS SIGN IN MODAL */}
-        {showBizSignin && (
-          <BusinessSignIn
-            onClose={() => setShowBizSignin(false)}
-            onSuccess={() => { setShowBizSignin(false); onDashboard && onDashboard(); }}
-            onSignUp={() => { setShowBizSignin(false); go("business-signup-1"); }}
-          />
-        )}
 
       </div>
     </>

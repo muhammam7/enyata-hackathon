@@ -6,7 +6,7 @@ import LandingPage from "./pages/LandingPage";
 // Business flow
 import BusinessSignup from "./pages/BusinessSignup";
 import BusinessSignupStepOne from "./pages/BusinessSignupStepOne";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard2";
 
 // Creator flow
 import CreatorSignupStepOne from "./pages/CreatorSignupStepOne";
@@ -16,7 +16,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import EnterOTP from "./pages/EnterOTP";
 import ResetPassword from "./pages/ResetPassword";
 import BVNVerification from "./pages/BVNVerification";
-import Dashboard2 from "./pages/Dashboard2";
+import Dashboard2 from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -38,7 +38,7 @@ export default function App() {
         <Route path="/creator/enter-otp" element={<EnterOTP />} />
         <Route path="/creator/reset-password" element={<ResetPassword />} />
         <Route path="/creator/bvn-verification" element={<BVNVerification />} />
-        <Route path="/creator/dashboard" element={<Dashboard2 />} />
+        <Route path="/creator/dashboard2" element={<Dashboard2 />} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />
