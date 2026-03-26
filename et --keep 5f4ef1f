@@ -1,0 +1,26 @@
+[33m22303c7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to ORIG_HEAD
+[33m086fe84[m HEAD@{1}: reset: moving to HEAD~1
+[33m22303c7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{2}: pull origin --rebase (finish): returning to refs/heads/main
+[33m22303c7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: pull origin --rebase (pick): Payment updated
+[33m086fe84[m HEAD@{4}: pull origin --rebase (pick): Landing page links to business and creator
+[33mc979103[m HEAD@{5}: pull origin --rebase (start): checkout c979103c6a549cdfe6b8ca67dfa0e2418c73624e
+[33m5f4ef1f[m HEAD@{6}: commit: Payment updated
+[33m4dc78b0[m HEAD@{7}: commit: Landing page links to business and creator
+[33m220efb3[m[33m ([m[1;31morigin/backend[m[33m)[m HEAD@{8}: commit: created the creator page, signup, sigin, and dashboard
+[33me323f06[m HEAD@{9}: commit: adjusted the padding and width of the screen
+[33mbe3ceff[m HEAD@{10}: commit: finished business page after adding notifications, settings and transaction history
+[33m15a2440[m HEAD@{11}: commit (merge): keep frontend README
+[33mc3bccc6[m HEAD@{12}: checkout: moving from frontend to main
+[33m398cc80[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;32mfrontend[m[33m)[m HEAD@{13}: checkout: moving from main to frontend
+[33mc3bccc6[m HEAD@{14}: checkout: moving from main to main
+[33mc3bccc6[m HEAD@{15}: checkout: moving from frontend to main
+[33m398cc80[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;32mfrontend[m[33m)[m HEAD@{16}: rebase (abort): returning to refs/heads/frontend
+[33mc3bccc6[m HEAD@{17}: pull origin main --rebase (start): checkout c3bccc615893b3e6d9a3b76e51dc6161b3c72f40
+[33m398cc80[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;32mfrontend[m[33m)[m HEAD@{18}: commit: pushing to main branch
+[33m2149b1e[m HEAD@{19}: commit: added the busineess profile
+[33m87f5151[m HEAD@{20}: commit: job request detail displays
+[33m71a48fd[m HEAD@{21}: commit: added the browse cretors and porfile page with the send job request
+[33m636c54d[m HEAD@{22}: commit: added dashboard page
+[33m1dfadb2[m HEAD@{23}: commit: second commit - business signup page 2
+[33mbfa009f[m HEAD@{24}: Branch: renamed refs/heads/master to refs/heads/frontend
+[33mbfa009f[m HEAD@{26}: commit (initial): inital commit - Business page signup
