@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+const BASE_URL = "http://localhost:8080/api";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -16,10 +19,8 @@ const styles = `
   }
   body { font-family: var(--font-body); background: var(--gray-50); color: var(--text); min-height: 100vh; }
 
-  /* ── LAYOUT ── */
   .dsh-wrap { display:flex; min-height:100vh; background:var(--gray-50); }
 
-  /* ── SIDEBAR ── */
   .sidebar {
     width:248px; background:white; border-right:1px solid #F0EEF8;
     display:flex; flex-direction:column; padding:0;
@@ -37,11 +38,10 @@ const styles = `
     display:flex; align-items:center; justify-content:space-between; cursor:pointer;
   }
   .sidebar-section-label svg { transition:transform 0.2s; }
-  .sidebar-section-label.collapsed svg { transform:rotate(-90deg); }
   .nav-item {
     display:flex; align-items:center; gap:12px; padding:11px 24px;
     font-size:14px; font-weight:500; color:var(--gray-600); cursor:pointer;
-    transition:all 0.15s; margin:1px 0; border-radius:0;
+    transition:all 0.15s; margin:1px 0;
   }
   .nav-item:hover { background:var(--gray-100); color:var(--text); }
   .nav-item.active { background:var(--purple-soft); color:var(--purple); font-weight:600; border-right:3px solid var(--purple); }
@@ -51,7 +51,6 @@ const styles = `
   .nav-logout { color:var(--danger) !important; }
   .nav-logout:hover { background:#FEF2F2 !important; }
 
-  /* ── MAIN ── */
   .main-content { margin-left:248px; flex:1; min-height:100vh; }
   .top-bar {
     background:white; border-bottom:1px solid #F0EEF8;
@@ -76,7 +75,6 @@ const styles = `
   }
   .content-area { padding:28px 32px; }
 
-  /* ── WALLET BAR ── */
   .wallet-bar {
     display:grid; grid-template-columns:1fr 1fr 1fr auto;
     background:linear-gradient(130deg,#4C1D95 0%,#6C3FE8 55%,#8B5CF6 100%);
@@ -93,26 +91,22 @@ const styles = `
   .wallet-link { font-size:12px; color:rgba(255,255,255,0.7); cursor:pointer; background:none; border:none; font-family:var(--font-body); text-decoration:underline; text-underline-offset:3px; }
   .wallet-link:hover { color:white; }
 
-  /* ── STAT CARDS ── */
   .stat-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
   .stat-card {
     background:white; border:1px solid #F0EEF8; border-radius:var(--radius);
     padding:18px 20px; cursor:pointer; transition:all 0.2s; position:relative;
   }
   .stat-card:hover { border-color:var(--purple-mid); box-shadow:var(--shadow); transform:translateY(-2px); }
-  .stat-card-icon { position:absolute; top:16px; right:16px; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
   .stat-label { font-size:11px; color:var(--gray-600); font-weight:600; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; }
   .stat-value { font-family:var(--font-head); font-size:28px; font-weight:800; }
   .stat-sub { font-size:12px; color:var(--gray-600); margin-top:3px; }
 
-  /* ── DASH GRID ── */
   .dash-grid { display:grid; grid-template-columns:1fr 340px; gap:22px; }
   .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
   .section-title-sm { font-family:var(--font-head); font-size:16px; font-weight:700; }
   .view-all { font-size:12px; color:var(--purple); cursor:pointer; font-weight:500; background:none; border:none; font-family:var(--font-body); }
   .view-all:hover { text-decoration:underline; }
 
-  /* ── TABLES ── */
   .table-wrapper { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); overflow:hidden; overflow-x:auto; }
   table { width:100%; border-collapse:collapse; min-width:500px; }
   thead th { background:var(--gray-50); font-size:11px; font-weight:600; color:var(--gray-600); text-transform:uppercase; letter-spacing:0.5px; padding:12px 16px; text-align:left; border-bottom:1px solid #F0EEF8; white-space:nowrap; }
@@ -131,7 +125,6 @@ const styles = `
   .type-credit { background:#D1FAE5; color:#065F46; }
   .type-withdrawal { background:#FEE2E2; color:#991B1B; }
 
-  /* ── AI RECS ── */
   .ai-section { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:18px; }
   .ai-badge-sm { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(90deg,var(--purple-soft),var(--purple-mid)); color:var(--purple); font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; margin-bottom:14px; }
   .rec-card { border:1px solid #F0EEF8; border-radius:10px; padding:14px; margin-bottom:10px; transition:all 0.15s; cursor:pointer; }
@@ -144,16 +137,13 @@ const styles = `
   .rec-match { font-size:11px; color:var(--purple); font-weight:600; background:var(--purple-soft); padding:2px 8px; border-radius:10px; margin-left:auto; white-space:nowrap; }
   .rec-desc { font-size:12px; color:var(--gray-600); line-height:1.5; }
 
-  /* ── BACK BTN ── */
   .back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--gray-600); cursor:pointer; margin-bottom:20px; background:none; border:none; font-family:var(--font-body); padding:0; }
   .back-btn:hover { color:var(--purple); }
 
-  /* ── PAGE HEADER ── */
   .page-header-bar { margin-bottom:20px; }
   .page-header-bar h2 { font-family:var(--font-head); font-size:20px; font-weight:800; }
   .page-header-bar p { font-size:13px; color:var(--gray-600); margin-top:4px; }
 
-  /* ── FILTER BAR ── */
   .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; align-items:flex-end; }
   .filter-group { display:flex; flex-direction:column; gap:4px; }
   .filter-label { font-size:11px; font-weight:600; color:var(--gray-600); text-transform:uppercase; letter-spacing:0.5px; }
@@ -165,7 +155,6 @@ const styles = `
   .filter-btn-clear { background:white; color:var(--gray-600); border:1.5px solid #F0EEF8; }
   .filter-btn-clear:hover { border-color:var(--gray-400); color:var(--text); }
 
-  /* ── SEARCH BAR ── */
   .search-filter-row { display:flex; gap:12px; align-items:center; background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:12px 16px; margin-bottom:16px; flex-wrap:wrap; }
   .search-input-wrap { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; }
   .search-input-wrap svg { color:var(--gray-400); flex-shrink:0; }
@@ -174,14 +163,11 @@ const styles = `
   .status-select { border:1.5px solid #F0EEF8; border-radius:var(--radius-sm); padding:7px 12px; font-family:var(--font-body); font-size:13px; color:var(--text); outline:none; cursor:pointer; background:white; min-width:120px; }
   .status-select:focus { border-color:var(--purple); }
 
-  /* ── DETAIL STAT ── */
   .detail-stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; margin-bottom:24px; }
   .detail-stat-card { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:18px 20px; position:relative; }
   .detail-stat-label { font-size:11px; font-weight:600; color:var(--gray-600); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
   .detail-stat-val { font-family:var(--font-head); font-size:26px; font-weight:800; }
-  .detail-stat-icon { position:absolute; top:16px; right:16px; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
 
-  /* ── BRIEFS GRID ── */
   .bids-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
   .bid-rec-card { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:22px; transition:all 0.2s; }
   .bid-rec-card:hover { border-color:var(--purple-light); box-shadow:var(--shadow); }
@@ -200,7 +186,6 @@ const styles = `
   .btn-make-bid { flex:1; background:var(--purple); color:white; border:none; padding:9px; border-radius:8px; font-family:var(--font-body); font-size:12px; font-weight:600; cursor:pointer; transition:all 0.15s; }
   .btn-make-bid:hover { background:var(--purple-dark); }
 
-  /* ── FORM ── */
   .form-group { margin-bottom:16px; }
   .form-label { font-size:13px; font-weight:500; color:var(--gray-800); margin-bottom:6px; display:block; }
   .form-input { width:100%; background:white; border:1.5px solid #F0EEF8; border-radius:var(--radius-sm); padding:11px 14px; font-family:var(--font-body); font-size:14px; color:var(--text); transition:border-color 0.2s; outline:none; }
@@ -210,14 +195,13 @@ const styles = `
   .form-select:focus { border-color:var(--purple); }
   .btn-full { width:100%; background:var(--purple); color:white; border:none; padding:13px; border-radius:50px; font-family:var(--font-body); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 16px rgba(108,63,232,0.3); }
   .btn-full:hover { background:var(--purple-dark); transform:translateY(-1px); }
+  .btn-full:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
 
-  /* ── SUCCESS BOX ── */
   .success-box { text-align:center; padding:48px 32px; background:white; border:1px solid #F0EEF8; border-radius:20px; }
   .success-circle { width:72px; height:72px; background:#D1FAE5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; }
   .success-title { font-family:var(--font-head); font-size:22px; font-weight:800; margin-bottom:10px; }
   .success-sub { font-size:14px; color:var(--gray-600); line-height:1.65; margin-bottom:28px; }
 
-  /* ── SUBMIT WORK ── */
   .submit-step-bar { display:flex; align-items:flex-start; margin-bottom:28px; background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:20px 24px; }
   .submit-step-item { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
   .submit-step-circle { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; margin-bottom:8px; z-index:1; }
@@ -230,13 +214,11 @@ const styles = `
   .submit-step-label.inactive { color:var(--gray-400); }
   .submit-step-line { position:absolute; top:16px; left:50%; right:-50%; height:2px; z-index:0; }
 
-  /* ── ONGOING ── */
   .submit-work-card { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:28px; max-width:640px; }
   .mark-complete-btn { background:#D1FAE5; color:#065F46; border:none; padding:10px 18px; border-radius:50px; font-family:var(--font-body); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
   .mark-complete-btn:hover { background:var(--success); color:white; }
   .mark-complete-btn:disabled { background:var(--gray-100); color:var(--gray-400); cursor:not-allowed; }
 
-  /* ── MESSAGES ── */
   .messages-layout { display:grid; grid-template-columns:300px 1fr; height:calc(100vh - 73px); background:white; border-top:1px solid #F0EEF8; overflow:hidden; }
   .chat-list { border-right:1px solid #F0EEF8; display:flex; flex-direction:column; }
   .chat-list-header { padding:16px; border-bottom:1px solid #F0EEF8; }
@@ -274,12 +256,10 @@ const styles = `
   .send-btn { width:38px; height:38px; background:var(--purple); border:none; border-radius:50%; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0; }
   .send-btn:hover { background:var(--purple-dark); }
 
-  /* ── TXN DETAIL ── */
   .txn-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
   .txn-detail-item label { font-size:11px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px; }
   .txn-detail-item span { font-size:14px; font-weight:500; }
 
-  /* ── NOTIFICATIONS ── */
   .notif-item { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:16px 20px; display:flex; gap:14px; align-items:flex-start; transition:all 0.15s; margin-bottom:10px; }
   .notif-item:hover { border-color:var(--purple-mid); }
   .notif-item.unread { border-left:3px solid var(--purple); }
@@ -289,7 +269,6 @@ const styles = `
   .notif-desc { font-size:13px; color:var(--gray-600); line-height:1.5; }
   .notif-time { font-size:11px; color:var(--gray-400); margin-top:5px; }
 
-  /* ── PROFILE ── */
   .profile-header-card { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:28px; display:flex; gap:24px; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; }
   .profile-avatar-lg { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--purple-light)); display:flex; align-items:center; justify-content:center; color:white; font-family:var(--font-head); font-size:24px; font-weight:800; flex-shrink:0; }
   .profile-name-lg { font-family:var(--font-head); font-size:22px; font-weight:800; margin-bottom:4px; }
@@ -307,14 +286,12 @@ const styles = `
   .portfolio-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
   .portfolio-item { background:var(--gray-100); border-radius:10px; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--gray-600); font-weight:500; border:1px solid #F0EEF8; }
 
-  /* ── SETTINGS ── */
   .settings-tabs { display:flex; border-bottom:2px solid #F0EEF8; margin-bottom:24px; }
   .settings-tab { padding:11px 22px; font-size:14px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.2s; color:var(--gray-600); background:none; border-left:none; border-right:none; border-top:none; font-family:var(--font-body); }
   .settings-tab.active { color:var(--purple); border-bottom-color:var(--purple); }
   .settings-card { background:white; border:1px solid #F0EEF8; border-radius:var(--radius); padding:26px; margin-bottom:18px; max-width:540px; }
   .settings-card-title { font-family:var(--font-head); font-size:16px; font-weight:700; margin-bottom:18px; }
 
-  /* ── WITHDRAW MODAL ── */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px; }
   .modal-box { background:white; border-radius:20px; padding:32px; width:100%; max-width:420px; position:relative; animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1); }
   @keyframes slideUp { from{opacity:0;transform:translateY(30px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
@@ -333,8 +310,8 @@ const styles = `
   .wdraw-success-circle { width:60px; height:60px; background:#D1FAE5; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
   .wdraw-success-title { font-family:var(--font-head); font-size:18px; font-weight:800; margin-bottom:6px; }
   .wdraw-success-sub { font-size:13px; color:var(--gray-600); line-height:1.6; }
+  .wdraw-error-box { background:#FEF2F2; border:1px solid #FEE2E2; border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:14px; font-size:13px; color:#991B1B; display:flex; align-items:flex-start; gap:8px; }
 
-  /* ── TOAST ── */
   .mc-toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-80px); background:white; border:1px solid #D1FAE5; border-left:4px solid var(--success); border-radius:12px; padding:14px 20px; display:flex; align-items:center; gap:12px; box-shadow:0 8px 32px rgba(0,0,0,0.12); z-index:500; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); min-width:280px; max-width:90vw; pointer-events:none; }
   .mc-toast.show { transform:translateX(-50%) translateY(0); }
   .mc-toast-icon { width:34px; height:34px; background:#D1FAE5; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -349,7 +326,6 @@ const styles = `
   @media (max-width:600px) { .stat-cards{grid-template-columns:1fr 1fr} .content-area{padding:18px 16px} .wallet-bar{grid-template-columns:1fr 1fr} }
 `;
 
-// ── DATA ──
 const openBriefs = [
   { id:0, initials:'TC', color:'linear-gradient(135deg,#6C3FE8,#A78BFA)', business:'TechCorp Nigeria', industry:'Tech Startup', location:'Lagos', match:96, title:'Product Launch Video', category:'Videographer', budget:'120,000 – 200,000', deadline:'Apr 25, 2026', posted:'Mar 15, 2026', desc:'Produce a high-energy product launch campaign video for our new mobile app. 60-second hero video plus 3 short clips for social media. Two-day shoot in Lagos, full creative brief available.', tags:['Videographer','Motion Graphics','Product Shoot'] },
   { id:1, initials:'BL', color:'linear-gradient(135deg,#10B981,#34D399)', business:'Bloom Agency', industry:'Marketing Agency', location:'Abuja', match:89, title:'Monthly Social Content', category:'Social Media Manager', budget:'60,000 – 80,000/month', deadline:'Ongoing', posted:'Mar 14, 2026', desc:'Seeking a social media content creator for monthly content packs across 3 brand clients — Instagram and TikTok. Consistent long-term opportunity for the right creator.', tags:['Social Media','Content Creator','Photography'] },
@@ -359,51 +335,147 @@ const openBriefs = [
 ];
 
 const initialProjects = [
-  { id:0, biz:'TechCorp Nigeria', bizInitials:'TC', bizColor:'linear-gradient(135deg,#6C3FE8,#A78BFA)', project:'Product Launch Video', value:'120,000', status:'In Progress', statusClass:'status-ongoing', started:'Mar 18, 2026', desc:"Produce a high-energy product launch campaign video for TechCorp Nigeria's new mobile app. Two-day shoot covering product demo, team interviews, and brand b-roll.", deliverable:'Final edited video (60s hero + 3 short clips for social media)', deadline:'Apr 25, 2026', workSubmitted:false },
-  { id:1, biz:'StartupHub', bizInitials:'SH', bizColor:'linear-gradient(135deg,#3B82F6,#60A5FA)', project:'Brand Documentary', value:'200,000', status:'In Review', statusClass:'status-review', started:'Mar 10, 2026', desc:"A brand documentary showcasing StartupHub's community and impact on the Lagos startup ecosystem. 5–8 minute documentary with founder interviews.", deliverable:'Full documentary + 2 short social cuts', deadline:'Apr 15, 2026', workSubmitted:true },
-  { id:2, biz:'FoodieHub', bizInitials:'FH', bizColor:'linear-gradient(135deg,#F59E0B,#FBBF24)', project:'Recipe Video Series', value:'80,000', status:'In Progress', statusClass:'status-ongoing', started:'Mar 19, 2026', desc:'Weekly recipe video series for FoodieHub\'s YouTube and Instagram channels. Minimum 4 videos per month.', deliverable:'4 recipe videos per month (Min. 1080p)', deadline:'Ongoing retainer', workSubmitted:false },
+  { id:0, biz:'TechCorp Nigeria', bizInitials:'TC', bizColor:'linear-gradient(135deg,#6C3FE8,#A78BFA)', project:'Product Launch Video', value:'120,000', status:'In Progress', statusClass:'status-ongoing', started:'Mar 18, 2026', desc:"Produce a high-energy product launch campaign video for TechCorp Nigeria's new mobile app.", deliverable:'Final edited video (60s hero + 3 short clips)', deadline:'Apr 25, 2026', workSubmitted:false },
+  { id:1, biz:'StartupHub', bizInitials:'SH', bizColor:'linear-gradient(135deg,#3B82F6,#60A5FA)', project:'Brand Documentary', value:'200,000', status:'In Review', statusClass:'status-review', started:'Mar 10, 2026', desc:"A brand documentary showcasing StartupHub's community and impact.", deliverable:'Full documentary + 2 short social cuts', deadline:'Apr 15, 2026', workSubmitted:true },
+  { id:2, biz:'FoodieHub', bizInitials:'FH', bizColor:'linear-gradient(135deg,#F59E0B,#FBBF24)', project:'Recipe Video Series', value:'80,000', status:'In Progress', statusClass:'status-ongoing', started:'Mar 19, 2026', desc:'Weekly recipe video series for FoodieHub\'s YouTube and Instagram channels.', deliverable:'4 recipe videos per month (Min. 1080p)', deadline:'Ongoing retainer', workSubmitted:false },
 ];
 
-// ── ICONS ──
 const BellIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>;
 const MsgIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
-const CheckIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>;
 const SearchIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
 
-// ── WITHDRAW MODAL ──
+// ─── WITHDRAW MODAL (wired to real API) ───────────────────────────────────────
 function WithdrawModal({ onClose }) {
-  const [step, setStep] = useState('confirm');
+  const [step, setStep] = useState('confirm'); // confirm | processing | success | error
   const [amount, setAmount] = useState('');
-  const process = () => {
-    if (!amount || parseFloat(amount) < 5000) { alert('Minimum withdrawal is ₦5,000'); return; }
+  const [apiError, setApiError] = useState('');
+  const [txnRef, setTxnRef] = useState('');
+
+  const process = async () => {
+    const parsed = parseFloat(amount);
+    if (!amount || isNaN(parsed) || parsed < 5000) {
+      setApiError('Minimum withdrawal amount is ₦5,000.');
+      return;
+    }
+    setApiError('');
     setStep('processing');
-    setTimeout(() => setStep('success'), 2200);
+
+    try {
+      const response = await fetch(`${BASE_URL}/payments/initialize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          brandEmail: 'amara@vynder.ng', // logged-in creator email
+          campaignId: 1,                 // default campaign ID for withdrawal
+          amount: parsed,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // API returned error — show it
+        throw new Error(data?.message || `Server error: ${response.status}`);
+      }
+
+      // Success — capture the transaction ref
+      setTxnRef(data.transactionRef || data.id || '');
+      setStep('success');
+    } catch (err) {
+      setApiError(err.message || 'Something went wrong. Please try again.');
+      setStep('error');
+    }
   };
+
+  const retry = () => { setStep('confirm'); setApiError(''); };
+
   return (
-    <div className="modal-overlay" onClick={e => e.target===e.currentTarget && onClose()}>
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-box">
         <button className="modal-close" onClick={onClose}>×</button>
-        {step==='confirm' && <>
-          <div className="modal-title">Withdraw Funds</div>
-          <div className="modal-sub">Funds will be sent to your saved payout account</div>
-          <div className="wdraw-balance-box"><span className="wdraw-balance-label">Available Balance</span><span className="wdraw-balance-val">₦195,000</span></div>
-          <div className="wdraw-bank-info"><div className="wdraw-bank-label">Paying to</div><div className="wdraw-bank-name">Zenith Bank — Shalom David</div><div className="wdraw-bank-acct">2045678901</div></div>
-          <div className="form-group"><label className="form-label">Amount to Withdraw (₦)</label><input className="form-input" type="number" placeholder="e.g. 50000" value={amount} onChange={e=>setAmount(e.target.value)}/><div style={{fontSize:11,color:'var(--gray-600)',marginTop:4}}>Minimum: ₦5,000</div></div>
-          <button className="btn-full" onClick={process}>Confirm Withdrawal</button>
-        </>}
-        {step==='processing' && <div style={{textAlign:'center',padding:'24px 0'}}><div className="spinner"/><div style={{fontFamily:'var(--font-head)',fontSize:15,fontWeight:700,marginBottom:4}}>Processing...</div><div style={{fontSize:12,color:'var(--gray-600)'}}>Sending via Interswitch</div></div>}
-        {step==='success' && <div className="wdraw-success"><div className="wdraw-success-circle"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div className="wdraw-success-title">Withdrawal Successful</div><div className="wdraw-success-sub">₦{parseFloat(amount).toLocaleString()} sent to your Zenith Bank account. Funds arrive within minutes.</div><button className="btn-full" style={{maxWidth:200,margin:'18px auto 0'}} onClick={onClose}>Done</button></div>}
+
+        {step === 'confirm' && (
+          <>
+            <div className="modal-title">Withdraw Funds</div>
+            <div className="modal-sub">Funds will be sent to your saved payout account</div>
+            <div className="wdraw-balance-box">
+              <span className="wdraw-balance-label">Available Balance</span>
+              <span className="wdraw-balance-val">₦195,000</span>
+            </div>
+            <div className="wdraw-bank-info">
+              <div className="wdraw-bank-label">Paying to</div>
+              <div className="wdraw-bank-name">Zenith Bank — Shalom David</div>
+              <div className="wdraw-bank-acct">2045678901</div>
+            </div>
+            {apiError && (
+              <div className="wdraw-error-box">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {apiError}
+              </div>
+            )}
+            <div className="form-group">
+              <label className="form-label">Amount to Withdraw (₦)</label>
+              <input
+                className="form-input"
+                type="number"
+                placeholder="e.g. 50000"
+                value={amount}
+                onChange={e => { setAmount(e.target.value); setApiError(''); }}
+              />
+            </div>
+            <button className="btn-full" onClick={process}>Confirm Withdrawal</button>
+          </>
+        )}
+
+        {step === 'processing' && (
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div className="spinner" />
+            <div style={{ fontFamily: 'var(--font-head)', fontSize: 15, fontWeight: 700 }}>Processing withdrawal...</div>
+            <div style={{ fontSize: 12, color: 'var(--gray-600)', marginTop: 6 }}>Talking to the payment server</div>
+          </div>
+        )}
+
+        {step === 'success' && (
+          <div className="wdraw-success">
+            <div className="wdraw-success-circle">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div className="wdraw-success-title">Withdrawal Successful</div>
+            <div className="wdraw-success-sub">
+              ₦{parseFloat(amount).toLocaleString()} has been sent to your Zenith Bank account.
+              {txnRef && <><br/><span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--gray-400)', marginTop: 6, display: 'block' }}>Ref: {txnRef}</span></>}
+            </div>
+            <button className="btn-full" style={{ maxWidth: 200, margin: '18px auto 0' }} onClick={onClose}>Done</button>
+          </div>
+        )}
+
+        {step === 'error' && (
+          <div style={{ textAlign: 'center', padding: '10px 0' }}>
+            <div style={{ width: 60, height: 60, background: '#FEE2E2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="3" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </div>
+            <div style={{ fontFamily: 'var(--font-head)', fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Withdrawal Failed</div>
+            <div style={{ fontSize: 13, color: 'var(--gray-600)', lineHeight: 1.6, marginBottom: 20 }}>{apiError}</div>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button className="btn-full" style={{ maxWidth: 140 }} onClick={retry}>Try Again</button>
+              <button className="filter-btn filter-btn-clear" onClick={onClose}>Cancel</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// ── OPEN BRIEFS ──
 function OpenBriefs({ onBriefDetail }) {
   const [search, setSearch] = useState('');
   const [cat, setCat] = useState('');
   const filtered = openBriefs.filter(b =>
-    (!search || b.title.toLowerCase().includes(search.toLowerCase()) || b.business.toLowerCase().includes(search.toLowerCase()) || b.tags.some(t=>t.toLowerCase().includes(search.toLowerCase()))) &&
+    (!search || b.title.toLowerCase().includes(search.toLowerCase()) || b.business.toLowerCase().includes(search.toLowerCase())) &&
     (!cat || b.category===cat)
   );
   return (
@@ -447,7 +519,6 @@ function OpenBriefs({ onBriefDetail }) {
   );
 }
 
-// ── BRIEF DETAIL ──
 function BriefDetail({ brief, onBack, onBidSubmitted }) {
   const [bidAmount, setBidAmount] = useState('');
   const [bidNote, setBidNote] = useState('');
@@ -477,10 +548,9 @@ function BriefDetail({ brief, onBack, onBidSubmitted }) {
       <div style={{background:'white',border:'1px solid #F0EEF8',borderRadius:'var(--radius)',padding:28}}>
         <div style={{fontFamily:'var(--font-head)',fontSize:17,fontWeight:800,marginBottom:4}}>Submit Your Bid</div>
         <div style={{fontSize:13,color:'var(--gray-600)',marginBottom:20}}>Tell {brief.business} why you're the right fit.</div>
-        <div className="form-group"><label className="form-label">Your Bid Amount (₦) *</label><input className="form-input" type="number" placeholder="e.g. 140000" value={bidAmount} onChange={e=>setBidAmount(e.target.value)}/><div style={{fontSize:11,color:'var(--gray-600)',marginTop:4}}>Business budget: ₦{brief.budget}</div></div>
-        <div className="form-group"><label className="form-label">Cover Note *</label><textarea className="form-input" rows={4} placeholder="Tell the business about your relevant experience and approach..." value={bidNote} onChange={e=>setBidNote(e.target.value)} style={{resize:'vertical',minHeight:100}}/></div>
+        <div className="form-group"><label className="form-label">Your Bid Amount (₦) *</label><input className="form-input" type="number" placeholder="e.g. 140000" value={bidAmount} onChange={e=>setBidAmount(e.target.value)}/></div>
+        <div className="form-group"><label className="form-label">Cover Note *</label><textarea className="form-input" rows={4} placeholder="Tell the business about your relevant experience..." value={bidNote} onChange={e=>setBidNote(e.target.value)} style={{resize:'vertical',minHeight:100}}/></div>
         <div className="form-group"><label className="form-label">Portfolio Link <span style={{fontWeight:400,color:'var(--gray-400)'}}>(optional)</span></label><input className="form-input" type="url" placeholder="https://yourportfolio.com" value={portfolio} onChange={e=>setPortfolio(e.target.value)}/></div>
-        <div style={{background:'var(--purple-soft)',borderRadius:'var(--radius-sm)',padding:'12px 16px',marginBottom:18,fontSize:12,color:'var(--purple-dark)',lineHeight:1.6}}><strong style={{color:'var(--purple)'}}>After submitting:</strong> The business reviews your bid. If accepted, you'll move to Bid Ongoing.</div>
         <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
           <button className="btn-full" style={{flex:1,minWidth:150}} onClick={submit}>Submit Bid</button>
           <button className="filter-btn filter-btn-clear" style={{flex:1,minWidth:110}} onClick={onBack}>Cancel</button>
@@ -490,12 +560,11 @@ function BriefDetail({ brief, onBack, onBidSubmitted }) {
   );
 }
 
-// ── BIDS SUBMITTED ──
 function BidsSubmitted({ onBack, onViewDetail }) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const bids = [
-    {biz:'TechCorp Nigeria',proj:'Product Launch Video',amt:'120,000',status:'Accepted',statusClass:'status-success',date:'Mar 18, 2026',desc:'Promotional video for TechCorp Nigeria app launch.',duration:'2-day shoot, April 2026',note:'Hi TechCorp, I have 3 similar product launches in my portfolio. Available from April 20.'},
+    {biz:'TechCorp Nigeria',proj:'Product Launch Video',amt:'120,000',status:'Accepted',statusClass:'status-success',date:'Mar 18, 2026',desc:'Promotional video for TechCorp Nigeria app launch.',duration:'2-day shoot, April 2026',note:'Hi TechCorp, I have 3 similar product launches in my portfolio.'},
     {biz:'Bloom Agency',proj:'Monthly Social Content',amt:'85,000',status:'Pending',statusClass:'status-pending',date:'Mar 15, 2026',desc:'Monthly social content for Bloom Agency clients.',duration:'Ongoing',note:''},
     {biz:'StartupHub',proj:'Brand Documentary',amt:'200,000',status:'Accepted',statusClass:'status-success',date:'Mar 10, 2026',desc:'Brand documentary for StartupHub.',duration:'3-week shoot',note:'Looking forward to telling your story.'},
     {biz:'NaijaKitchen',proj:'Menu Photoshoot',amt:'75,000',status:'Pending',statusClass:'status-pending',date:'Mar 5, 2026',desc:'Food photography for NaijaKitchen menu.',duration:'1-day shoot',note:''},
@@ -507,11 +576,8 @@ function BidsSubmitted({ onBack, onViewDetail }) {
       <button className="back-btn" onClick={onBack}>← Back to Dashboard</button>
       <div className="page-header-bar"><h2>Bids Submitted</h2><p>Bids you have submitted on business briefs</p></div>
       <div className="detail-stat-grid">
-        {[['Total Submitted',9,'#DBEAFE','#1E40AF',<CheckIcon/>],['Accepted',3,'#D1FAE5','#065F46',<CheckIcon/>],['Pending Response',6,'#FEF3C7','#92400E',null],['Declined',3,'#FEE2E2','#991B1B',null]].map(([l,v,bg,col,icon])=>(
-          <div className="detail-stat-card" key={l}>
-            {icon&&<div className="detail-stat-icon" style={{background:bg,color:col}}>{icon}</div>}
-            <div className="detail-stat-label">{l}</div><div className="detail-stat-val">{v}</div>
-          </div>
+        {[['Total Submitted',9],['Accepted',3],['Pending Response',6],['Declined',3]].map(([l,v])=>(
+          <div className="detail-stat-card" key={l}><div className="detail-stat-label">{l}</div><div className="detail-stat-val">{v}</div></div>
         ))}
       </div>
       <div className="search-filter-row">
@@ -537,9 +603,7 @@ function BidsSubmitted({ onBack, onViewDetail }) {
   );
 }
 
-// ── BID SUBMITTED DETAIL ──
 function BidSubmittedDetail({ bid, onBack }) {
-  const isAccepted = bid.status==='Accepted';
   return (
     <div className="content-area">
       <button className="back-btn" onClick={onBack}>← Back to Bids Submitted</button>
@@ -555,22 +619,18 @@ function BidSubmittedDetail({ bid, onBack }) {
           ))}
         </div>
         {bid.note&&<div style={{background:'var(--gray-50)',borderLeft:'3px solid var(--purple-mid)',borderRadius:'0 8px 8px 0',padding:'12px 16px',marginBottom:20}}><div style={{fontSize:11,fontWeight:700,color:'var(--gray-400)',textTransform:'uppercase',marginBottom:6}}>Message Sent</div><div style={{fontSize:13,color:'var(--gray-600)',lineHeight:1.6}}>{bid.note}</div></div>}
-        {isAccepted&&<div style={{background:'#D1FAE5',borderRadius:10,padding:'14px 18px'}}><div style={{fontSize:13,fontWeight:700,color:'#065F46',marginBottom:2}}>Bid Accepted — Project is now active</div><div style={{fontSize:12,color:'#065F46'}}>Head to Bid Ongoing to track progress.</div></div>}
+        {bid.status==='Accepted'&&<div style={{background:'#D1FAE5',borderRadius:10,padding:'14px 18px'}}><div style={{fontSize:13,fontWeight:700,color:'#065F46',marginBottom:2}}>Bid Accepted — Project is now active</div><div style={{fontSize:12,color:'#065F46'}}>Head to Bid Ongoing to track progress.</div></div>}
       </div>
     </div>
   );
 }
 
-// ── BIDS RECEIVED ──
 function BidsReceived({ onBack, onViewDetail }) {
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const bids = [
-    {biz:'FoodieHub',bid:'Recipe Video Series',amount:'180,000',status:'Awaiting Review',statusClass:'status-pending',date:'Mar 19, 2026',desc:'FoodieHub is looking for a videographer to produce a weekly recipe video series.',budget:'180,000',duration:'Ongoing retainer',isAwaiting:true},
-    {biz:'Lagos Fashion Week',bid:'Event Coverage',amount:'250,000',status:'Awaiting Review',statusClass:'status-pending',date:'Mar 17, 2026',desc:'Full event coverage for Lagos Fashion Week 2026 — runway shoots, backstage content, and highlight reels.',budget:'250,000',duration:'3-day event, April 2026',isAwaiting:true},
+    {biz:'FoodieHub',bid:'Recipe Video Series',amount:'180,000',status:'Awaiting Review',statusClass:'status-pending',date:'Mar 19, 2026',desc:'FoodieHub is looking for a videographer for a weekly recipe video series.',budget:'180,000',duration:'Ongoing retainer',isAwaiting:true},
+    {biz:'Lagos Fashion Week',bid:'Event Coverage',amount:'250,000',status:'Awaiting Review',statusClass:'status-pending',date:'Mar 17, 2026',desc:'Full event coverage for Lagos Fashion Week 2026.',budget:'250,000',duration:'3-day event, April 2026',isAwaiting:true},
     {biz:'TechCorp Nigeria',bid:'App Launch Promo',amount:'120,000',status:'Accepted',statusClass:'status-success',date:'Mar 10, 2026',desc:'Promotional video for TechCorp Nigeria app launch.',budget:'120,000',duration:'2-day shoot, April 2026',isAwaiting:false},
   ];
-  const filtered = bids.filter(b=>(!search||(b.biz+b.bid).toLowerCase().includes(search.toLowerCase()))&&(!statusFilter||b.status===statusFilter));
   return (
     <div className="content-area">
       <button className="back-btn" onClick={onBack}>← Back to Dashboard</button>
@@ -580,15 +640,11 @@ function BidsReceived({ onBack, onViewDetail }) {
           <div className="detail-stat-card" key={l}><div className="detail-stat-label">{l}</div><div className="detail-stat-val">{v}</div></div>
         ))}
       </div>
-      <div className="search-filter-row">
-        <div className="search-input-wrap"><SearchIcon/><input className="search-input" placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)}/></div>
-        <select className="status-select" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option value="">All Status</option><option>Awaiting Review</option><option>Accepted</option><option>Declined</option></select>
-      </div>
       <div className="table-wrapper">
         <table>
           <thead><tr><th>Business</th><th>Bid Name</th><th>Offered Amount</th><th>Status</th><th>Received Date</th><th>Action</th></tr></thead>
           <tbody>
-            {filtered.map(b=>(
+            {bids.map(b=>(
               <tr key={b.bid}>
                 <td><strong>{b.biz}</strong></td><td>{b.bid}</td><td>₦{b.amount}</td>
                 <td><span className={`status-badge ${b.statusClass}`}>{b.status}</span></td>
@@ -603,7 +659,6 @@ function BidsReceived({ onBack, onViewDetail }) {
   );
 }
 
-// ── BID RECEIVED DETAIL ──
 function BidReceivedDetail({ bid, onBack }) {
   return (
     <div className="content-area">
@@ -620,28 +675,18 @@ function BidReceivedDetail({ bid, onBack }) {
           ))}
         </div>
         {bid.isAwaiting ? (
-          <>
-            <div style={{background:'var(--gray-50)',border:'1px solid #F0EEF8',borderRadius:10,padding:18,marginBottom:22}}>
-              <div style={{fontSize:13,fontWeight:600,marginBottom:3}}>Ready to respond?</div>
-              <div style={{fontSize:13,color:'var(--gray-600)'}}>Once you accept, the project moves to Bid Ongoing. Declining removes it from your list.</div>
-            </div>
-            <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
-              <button className="btn-full" style={{flex:1,minWidth:120}}>Accept Bid</button>
-              <button style={{flex:1,minWidth:120,background:'white',color:'var(--danger)',border:'2px solid #FEE2E2',padding:13,borderRadius:50,fontFamily:'var(--font-body)',fontSize:14,fontWeight:600,cursor:'pointer',transition:'all 0.2s'}}>Decline Bid</button>
-            </div>
-          </>
-        ) : (
-          <div style={{background:'#D1FAE5',borderRadius:10,padding:'14px 18px'}}>
-            <div style={{fontSize:13,fontWeight:700,color:'#065F46',marginBottom:2}}>Bid Accepted — Project is now active</div>
-            <div style={{fontSize:12,color:'#065F46'}}>Head to Bid Ongoing to track progress.</div>
+          <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+            <button className="btn-full" style={{flex:1,minWidth:120}}>Accept Bid</button>
+            <button style={{flex:1,minWidth:120,background:'white',color:'var(--danger)',border:'2px solid #FEE2E2',padding:13,borderRadius:50,fontFamily:'var(--font-body)',fontSize:14,fontWeight:600,cursor:'pointer'}}>Decline Bid</button>
           </div>
+        ) : (
+          <div style={{background:'#D1FAE5',borderRadius:10,padding:'14px 18px'}}><div style={{fontSize:13,fontWeight:700,color:'#065F46',marginBottom:2}}>Bid Accepted — Project is now active</div><div style={{fontSize:12,color:'#065F46'}}>Head to Bid Ongoing to track progress.</div></div>
         )}
       </div>
     </div>
   );
 }
 
-// ── BID ONGOING ──
 function BidOngoing({ onBack, onViewProject, projects }) {
   return (
     <div className="content-area">
@@ -666,7 +711,6 @@ function BidOngoing({ onBack, onViewProject, projects }) {
   );
 }
 
-// ── ONGOING DETAIL ──
 function OngoingDetail({ project, projectIndex, onBack, onSubmitWork, onMarkComplete }) {
   return (
     <div className="content-area">
@@ -674,10 +718,7 @@ function OngoingDetail({ project, projectIndex, onBack, onSubmitWork, onMarkComp
       <div style={{background:'white',border:'1px solid #F0EEF8',borderRadius:'var(--radius)',padding:28,maxWidth:680}}>
         <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:20,flexWrap:'wrap'}}>
           <div style={{width:52,height:52,borderRadius:'50%',background:project.bizColor,display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontFamily:'var(--font-head)',fontSize:16,fontWeight:700,flexShrink:0}}>{project.bizInitials}</div>
-          <div style={{flex:1}}>
-            <div style={{fontFamily:'var(--font-head)',fontSize:19,fontWeight:800}}>{project.project}</div>
-            <div style={{fontSize:13,color:'var(--purple)',fontWeight:600,marginTop:2}}>{project.biz}</div>
-          </div>
+          <div style={{flex:1}}><div style={{fontFamily:'var(--font-head)',fontSize:19,fontWeight:800}}>{project.project}</div><div style={{fontSize:13,color:'var(--purple)',fontWeight:600,marginTop:2}}>{project.biz}</div></div>
           <span className={`status-badge ${project.statusClass}`}>{project.status}</span>
         </div>
         <div style={{fontSize:14,color:'var(--gray-600)',lineHeight:1.7,marginBottom:22}}>{project.desc}</div>
@@ -700,8 +741,7 @@ function OngoingDetail({ project, projectIndex, onBack, onSubmitWork, onMarkComp
   );
 }
 
-// ── SUBMIT WORK ──
-function SubmitWork({ project, projectIndex, onBack, onSuccess }) {
+function SubmitWork({ project, onBack, onSuccess, projectIndex }) {
   const [link, setLink] = useState('');
   const [type, setType] = useState('');
   const [note, setNote] = useState('');
@@ -722,7 +762,7 @@ function SubmitWork({ project, projectIndex, onBack, onSuccess }) {
           ))}
         </div>
         <div className="submit-work-card">
-          <div className="form-group"><label className="form-label">Delivery Link *</label><input className="form-input" type="url" placeholder="https://drive.google.com/... or WeTransfer, Dropbox etc." value={link} onChange={e=>setLink(e.target.value)}/><div style={{fontSize:11,color:'var(--gray-600)',marginTop:4}}>Make sure the link is accessible to the business.</div></div>
+          <div className="form-group"><label className="form-label">Delivery Link *</label><input className="form-input" type="url" placeholder="https://drive.google.com/..." value={link} onChange={e=>setLink(e.target.value)}/></div>
           <div className="form-group"><label className="form-label">Deliverable Type</label>
             <select className="form-select" value={type} onChange={e=>setType(e.target.value)}>
               <option value="">Select type</option>
@@ -730,7 +770,6 @@ function SubmitWork({ project, projectIndex, onBack, onSuccess }) {
             </select>
           </div>
           <div className="form-group"><label className="form-label">Note to Business <span style={{fontWeight:400,color:'var(--gray-400)'}}>(optional)</span></label><textarea className="form-input" rows={4} placeholder="e.g. All 3 video edits are in the folder..." value={note} onChange={e=>setNote(e.target.value)} style={{resize:'vertical',minHeight:90}}/></div>
-          <div style={{background:'var(--purple-soft)',borderRadius:'var(--radius-sm)',padding:'12px 16px',marginBottom:18,fontSize:12,color:'var(--purple-dark)',lineHeight:1.6}}><strong style={{color:'var(--purple)'}}>What happens next?</strong> The business will review your work. Once approved, mark complete and your payment is released.</div>
           <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
             <button className="btn-full" style={{flex:1,minWidth:150}} onClick={submit}>Submit Work</button>
             <button className="filter-btn filter-btn-clear" style={{flex:1,minWidth:110}} onClick={onBack}>Cancel</button>
@@ -741,7 +780,6 @@ function SubmitWork({ project, projectIndex, onBack, onSuccess }) {
   );
 }
 
-// ── COMPLETED JOBS ──
 function CompletedJobs({ onBack }) {
   return (
     <div className="content-area">
@@ -765,7 +803,6 @@ function CompletedJobs({ onBack }) {
   );
 }
 
-// ── TRANSACTIONS ──
 function TransactionHistory({ onViewTxn }) {
   const txns = [
     {id:'TXN-8821934',payer:'TechCorp Nigeria',bid:'Product Launch Video',amount:'+120,000',type:'Credit',recipient:'Amara Okon',status:'Paid',statusClass:'status-success',typeClass:'type-credit',date:'Mar 18, 2026 · 2:14 PM'},
@@ -806,7 +843,6 @@ function TransactionHistory({ onViewTxn }) {
   );
 }
 
-// ── TXN DETAIL ──
 function TxnDetail({ txn, onBack }) {
   return (
     <div className="content-area">
@@ -830,20 +866,19 @@ function TxnDetail({ txn, onBack }) {
   );
 }
 
-// ── NOTIFICATIONS ──
 function Notifications() {
   const items = [
-    {unread:true,title:'New business match — TechCorp Nigeria',desc:"TechCorp Nigeria has been matched to your profile with a 96% compatibility score. Check out their brief.",time:'Today · 11:30 AM'},
-    {unread:true,title:'Your bid was accepted — StartupHub',desc:"StartupHub accepted your bid for the Brand Documentary project. Head to messages to coordinate.",time:'Today · 9:15 AM'},
-    {unread:true,title:'Payment received — ₦120,000',desc:"TechCorp Nigeria completed payment for the Product Launch Video project. Funds are now in your Vynder wallet.",time:'Mar 18, 2026 · 2:14 PM'},
+    {unread:true,title:'New business match — TechCorp Nigeria',desc:"TechCorp Nigeria has been matched to your profile with a 96% compatibility score.",time:'Today · 11:30 AM'},
+    {unread:true,title:'Your bid was accepted — StartupHub',desc:"StartupHub accepted your bid for the Brand Documentary project.",time:'Today · 9:15 AM'},
+    {unread:true,title:'Payment received — ₦120,000',desc:"TechCorp Nigeria completed payment. Funds are now in your Vynder wallet.",time:'Mar 18, 2026 · 2:14 PM'},
     {unread:false,title:'New message from Bloom Agency',desc:"Bloom Agency sent you a message regarding an ongoing retainer opportunity.",time:'Mar 15, 2026 · 10:05 AM'},
-    {unread:false,title:'Profile viewed by NaijaKitchen',desc:"NaijaKitchen viewed your creator profile. Your work may be a great fit for their upcoming campaign.",time:'Mar 14, 2026 · 3:40 PM'},
+    {unread:false,title:'Profile viewed by NaijaKitchen',desc:"NaijaKitchen viewed your creator profile.",time:'Mar 14, 2026 · 3:40 PM'},
   ];
   return (
     <div className="content-area">
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
         <div><h2 style={{fontFamily:'var(--font-head)',fontSize:20,fontWeight:800}}>Notifications</h2><p style={{fontSize:13,color:'var(--gray-600)',marginTop:4}}>3 unread</p></div>
-        <button className="filter-btn filter-btn-clear" style={{fontSize:13}}>Mark all as read</button>
+        <button className="filter-btn filter-btn-clear">Mark all as read</button>
       </div>
       {items.map((n,i)=>(
         <div key={i} className={`notif-item ${n.unread?'unread':''}`}>
@@ -855,7 +890,6 @@ function Notifications() {
   );
 }
 
-// ── PROFILE ──
 function ProfilePage() {
   return (
     <div className="content-area">
@@ -868,7 +902,7 @@ function ProfilePage() {
         <div style={{flex:1}}>
           <div className="profile-name-lg">Amara Okon</div>
           <div className="profile-role-lg">Videographer & Content Creator</div>
-          <div className="profile-bio">Lagos-based videographer with 4+ years of experience producing commercial videos, brand documentaries, and social media content for businesses across Nigeria.</div>
+          <div className="profile-bio">Lagos-based videographer with 4+ years producing commercial videos, brand documentaries, and social content for businesses across Nigeria.</div>
           <div className="profile-tags-row">{['Videographer','Content Creator','Brand Films','Social Media'].map(t=><span key={t} className="profile-tag">{t}</span>)}</div>
         </div>
         <div style={{textAlign:'right',flexShrink:0}}>
@@ -904,7 +938,6 @@ function ProfilePage() {
   );
 }
 
-// ── SETTINGS ──
 function SettingsPage() {
   const [activeTab, setActiveTab] = useState('payout');
   const [acctNum, setAcctNum] = useState('');
@@ -918,20 +951,18 @@ function SettingsPage() {
         ))}
       </div>
       {activeTab==='payout'&&(
-        <div>
-          <div className="settings-card">
-            <div className="settings-card-title">Payout Settings</div>
-            <p style={{fontSize:13,color:'var(--gray-600)',marginBottom:20,lineHeight:1.6}}>Your bank details are private and only used by Vynder to settle payments.</p>
-            <div className="form-group"><label className="form-label">Bank Name</label><select className="form-select"><option value="">Select your bank</option>{['Access Bank','First Bank','GTBank','UBA','Zenith Bank','Kuda Bank','Opay','Palmpay'].map(b=><option key={b}>{b}</option>)}</select></div>
-            <div className="form-group"><label className="form-label">Account Number</label>
-              <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
-                <input className="form-input" type="text" placeholder="Enter 10-digit account number" maxLength={10} value={acctNum} onChange={e=>{setAcctNum(e.target.value);if(e.target.value.length!==10)setVerifyState('idle');}} style={{flex:1}}/>
-                <button style={{padding:'11px 16px',background:verifyState==='verified'?'var(--success)':'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-sm)',fontFamily:'var(--font-body)',fontSize:13,fontWeight:600,cursor:acctNum.length===10?'pointer':'not-allowed',opacity:acctNum.length===10?1:0.5,whiteSpace:'nowrap',transition:'all 0.2s'}} onClick={handleVerify} disabled={acctNum.length!==10||verifyState!=='idle'}>{verifyState==='loading'?'Verifying...':verifyState==='verified'?'Verified ✓':'Verify'}</button>
-              </div>
-              {verifyState==='verified'&&<div style={{background:'var(--gray-50)',border:'1.5px solid var(--success)',borderRadius:'var(--radius-sm)',padding:'12px 16px',marginTop:10}}><div style={{fontSize:11,fontWeight:600,color:'var(--gray-400)',textTransform:'uppercase',letterSpacing:'0.5px',marginBottom:4}}>Account Name</div><div style={{fontSize:15,fontWeight:700}}>SHALOM DAVID</div><div style={{fontSize:12,color:'var(--success)',marginTop:3,fontWeight:500}}>Verified</div></div>}
+        <div className="settings-card">
+          <div className="settings-card-title">Payout Settings</div>
+          <p style={{fontSize:13,color:'var(--gray-600)',marginBottom:20,lineHeight:1.6}}>Your bank details are private and only used by Vynder to settle payments.</p>
+          <div className="form-group"><label className="form-label">Bank Name</label><select className="form-select"><option value="">Select your bank</option>{['Access Bank','First Bank','GTBank','UBA','Zenith Bank','Kuda Bank','Opay','Palmpay'].map(b=><option key={b}>{b}</option>)}</select></div>
+          <div className="form-group"><label className="form-label">Account Number</label>
+            <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+              <input className="form-input" type="text" placeholder="Enter 10-digit account number" maxLength={10} value={acctNum} onChange={e=>{setAcctNum(e.target.value);if(e.target.value.length!==10)setVerifyState('idle');}} style={{flex:1}}/>
+              <button style={{padding:'11px 16px',background:verifyState==='verified'?'var(--success)':'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-sm)',fontFamily:'var(--font-body)',fontSize:13,fontWeight:600,cursor:acctNum.length===10?'pointer':'not-allowed',opacity:acctNum.length===10?1:0.5,whiteSpace:'nowrap',transition:'all 0.2s'}} onClick={handleVerify} disabled={acctNum.length!==10||verifyState!=='idle'}>{verifyState==='loading'?'Verifying...':verifyState==='verified'?'Verified ✓':'Verify'}</button>
             </div>
-            <button className="btn-full" style={{marginTop:4}}>Save Payout Details</button>
+            {verifyState==='verified'&&<div style={{background:'var(--gray-50)',border:'1.5px solid var(--success)',borderRadius:'var(--radius-sm)',padding:'12px 16px',marginTop:10}}><div style={{fontSize:15,fontWeight:700}}>SHALOM DAVID</div><div style={{fontSize:12,color:'var(--success)',marginTop:3}}>Verified</div></div>}
           </div>
+          <button className="btn-full" style={{marginTop:4}}>Save Payout Details</button>
         </div>
       )}
       {activeTab==='security'&&(
@@ -963,19 +994,18 @@ function SettingsPage() {
   );
 }
 
-// ── MESSAGES ──
 function MessagesPage() {
   const convos = [
     {id:1,initials:'TC',name:'TechCorp Nigeria',preview:"Sounds good! Can you share your availability?",time:'11:42',unread:true,color:'linear-gradient(135deg,#6C3FE8,#A78BFA)',msgs:[
-      {from:'recv',text:"Hi Amara! We came across your profile via Vynder. We're planning a product launch — your work looks perfect.",time:'11:30 AM'},
-      {from:'sent',text:"Thank you! I'd love to hear more. What's the scope and timeline?",time:'11:35 AM'},
-      {from:'recv',text:"It's a 2-day shoot for our new app launch. Late April. Budget around ₦200k. Does that work?",time:'11:38 AM'},
-      {from:'sent',text:"That works! Can you share a brief so I can give you a formal quote?",time:'11:40 AM'},
-      {from:'recv',text:"Sounds good! Can you share your availability for a quick call this week?",time:'11:42 AM'},
+      {from:'recv',text:"Hi Amara! We came across your profile via Vynder.",time:'11:30 AM'},
+      {from:'sent',text:"Thank you! I'd love to hear more. What's the scope?",time:'11:35 AM'},
+      {from:'recv',text:"2-day shoot, late April. Budget ~₦200k.",time:'11:38 AM'},
+      {from:'sent',text:"That works! Can you share a brief so I can quote formally?",time:'11:40 AM'},
+      {from:'recv',text:"Sounds good! Can you share your availability for a quick call?",time:'11:42 AM'},
     ]},
-    {id:2,initials:'BL',name:'Bloom Agency',preview:"We loved your portfolio. Let's talk.",time:'Tue',unread:true,color:'linear-gradient(135deg,#10B981,#34D399)',msgs:[{from:'recv',text:"We loved your portfolio. Let's talk about a retainer opportunity.",time:'Tue 2:00 PM'}]},
-    {id:3,initials:'NK',name:'NaijaKitchen',preview:"Great, we'll proceed with your quote.",time:'Mon',unread:false,color:'linear-gradient(135deg,#F59E0B,#FBBF24)',msgs:[{from:'sent',text:"Sent over the quote for the menu photoshoot.",time:'Mon 10:00 AM'},{from:'recv',text:"Great, we'll proceed with your quote.",time:'Mon 11:00 AM'}]},
-    {id:4,initials:'SH',name:'StartupHub',preview:"Payment has been processed.",time:'Mar 10',unread:false,color:'linear-gradient(135deg,#3B82F6,#60A5FA)',msgs:[{from:'recv',text:"Payment has been processed. Thanks for the amazing documentary!",time:'Mar 10'}]},
+    {id:2,initials:'BL',name:'Bloom Agency',preview:"We loved your portfolio. Let's talk.",time:'Tue',unread:true,color:'linear-gradient(135deg,#10B981,#34D399)',msgs:[{from:'recv',text:"We loved your portfolio. Let's talk about a retainer.",time:'Tue 2:00 PM'}]},
+    {id:3,initials:'NK',name:'NaijaKitchen',preview:"Great, we'll proceed with your quote.",time:'Mon',unread:false,color:'linear-gradient(135deg,#F59E0B,#FBBF24)',msgs:[{from:'sent',text:"Sent the quote for the menu photoshoot.",time:'Mon 10:00 AM'},{from:'recv',text:"Great, we'll proceed.",time:'Mon 11:00 AM'}]},
+    {id:4,initials:'SH',name:'StartupHub',preview:"Payment has been processed.",time:'Mar 10',unread:false,color:'linear-gradient(135deg,#3B82F6,#60A5FA)',msgs:[{from:'recv',text:"Payment processed. Thanks for the amazing documentary!",time:'Mar 10'}]},
   ];
   const [active, setActive] = useState(convos[0]);
   const [input, setInput] = useState('');
@@ -1032,7 +1062,6 @@ function MessagesPage() {
   );
 }
 
-// ── SIDEBAR ──
 function Sidebar({ page, setPage, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(true);
   const navItems = [
@@ -1049,7 +1078,7 @@ function Sidebar({ page, setPage, onLogout }) {
           <span className="sidebar-logo">vynder</span>
           <span className="sidebar-logo-badge">Creator</span>
         </div>
-        <div className="sidebar-org">TechCorp Nigeria</div>
+        <div className="sidebar-org">Vynder Platform</div>
         <div className="sidebar-section-label" onClick={()=>setMenuOpen(!menuOpen)}>
           Menu
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>
@@ -1081,8 +1110,8 @@ function Sidebar({ page, setPage, onLogout }) {
   );
 }
 
-// ── MAIN DASHBOARD ──
-export default function Dashboard({ onLogout }) {
+export default function Dashboard() {
+  const navigate = useNavigate();
   const [page, setPage] = useState('dashboard');
   const [subPage, setSubPage] = useState(null);
   const [subData, setSubData] = useState(null);
@@ -1093,6 +1122,7 @@ export default function Dashboard({ onLogout }) {
 
   const showToast = (msg) => { setToastMsg(msg); setToastShow(true); setTimeout(()=>setToastShow(false),4000); };
   const navToPage = (p) => { setPage(p); setSubPage(null); setSubData(null); };
+  const handleLogout = () => navigate('/');
 
   const handleMarkComplete = (projectName, idx) => {
     setProjects(prev=>prev.map((p,i)=>i===idx?{...p,status:'Completed',statusClass:'status-success'}:p));
@@ -1105,11 +1135,7 @@ export default function Dashboard({ onLogout }) {
     setSubData({project,idx});
   };
 
-  const pageTitles = {
-    dashboard:'Dashboard',briefs:'Browse Briefs',messages:'Messages',
-    transactions:'Transaction History',notifications:'Notifications',
-    profile:'My Profile',settings:'Settings',
-  };
+  const pageTitles = { dashboard:'Dashboard',briefs:'Browse Briefs',messages:'Messages',transactions:'Transaction History',notifications:'Notifications',profile:'My Profile',settings:'Settings' };
   const subPageTitles = {
     'brief-detail':subData?.title||'Brief Details','bid-submitted-form':'Bid Submitted',
     'bids-submitted':'Bids Submitted','bids-submitted-detail':subData?`${subData.biz} — ${subData.proj}`:'Bid Details',
@@ -1118,10 +1144,9 @@ export default function Dashboard({ onLogout }) {
     'submit-work':'Submit Work','submit-success':'Work Submitted','completed':'Completed Jobs','txn-detail':'Transaction Details',
   };
   const currentTitle = subPage?(subPageTitles[subPage]||'Details'):(pageTitles[page]||'Dashboard');
-  const currentSubtitle = subPage?'':({dashboard:'Here\'s your activity at a glance',briefs:'Find open briefs matched to your profile',messages:'Your conversations with businesses',transactions:'All your earnings and withdrawals',notifications:'Stay up to date',profile:'Your public creator profile',settings:'Manage your account',}[page]||'');
+  const currentSubtitle = subPage?'':({dashboard:"Here's your activity at a glance",briefs:'Find open briefs matched to your profile',messages:'Your conversations with businesses',transactions:'All your earnings and withdrawals',notifications:'Stay up to date',profile:'Your public creator profile',settings:'Manage your account'}[page]||'');
 
   const renderContent = () => {
-    // Sub-pages
     if (subPage==='brief-detail') return <BriefDetail brief={subData} onBack={()=>setSubPage(null)} onBidSubmitted={(t,b)=>{setSubPage('bid-submitted-form');setSubData({title:t,biz:b});}}/>;
     if (subPage==='bid-submitted-form') return (
       <div className="content-area"><div style={{maxWidth:460,margin:'60px auto'}}>
@@ -1146,7 +1171,7 @@ export default function Dashboard({ onLogout }) {
         <div className="success-box">
           <div className="success-circle"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
           <div className="success-title">Work Submitted!</div>
-          <div className="success-sub">Your work for "{subData?.project?.project}" has been sent for review. You'll be notified once the business approves.</div>
+          <div className="success-sub">Your work for "{subData?.project?.project}" has been sent for review.</div>
           <button className="btn-full" style={{maxWidth:240,margin:'0 auto'}} onClick={()=>{setSubPage('bid-ongoing');setSubData(null);}}>Back to Ongoing</button>
           <div style={{marginTop:12}}><span style={{fontSize:13,color:'var(--purple)',cursor:'pointer',fontWeight:500}} onClick={()=>navToPage('dashboard')}>Go to Dashboard</span></div>
         </div>
@@ -1155,7 +1180,6 @@ export default function Dashboard({ onLogout }) {
     if (subPage==='completed') return <CompletedJobs onBack={()=>setSubPage(null)}/>;
     if (subPage==='txn-detail') return <TxnDetail txn={subData} onBack={()=>setSubPage(null)}/>;
 
-    // Main pages
     if (page==='dashboard') return (
       <div className="content-area">
         <div className="wallet-bar">
@@ -1165,16 +1189,16 @@ export default function Dashboard({ onLogout }) {
           <div className="wallet-action"><button className="withdraw-btn" onClick={()=>setShowWithdraw(true)}>Withdraw</button><button className="wallet-link" onClick={()=>navToPage('transactions')}>View history</button></div>
         </div>
         <div style={{marginBottom:20}}>
-          <h2 style={{fontFamily:'var(--font-head)',fontSize:21,fontWeight:800}}>Good morning, Shalom 👋</h2>
+          <h2 style={{fontFamily:'var(--font-head)',fontSize:21,fontWeight:800}}>Good morning, Amara 👋</h2>
           <p style={{fontSize:13,color:'var(--gray-600)',marginTop:4}}>Here's a summary of your activity today</p>
         </div>
         <div className="stat-cards">
           {[
-            ['Bids Submitted',12,'On open briefs','bids-submitted','#DBEAFE','#1E40AF'],
-            ['Bids Received',7,'2 awaiting review','bids-received','#FEF3C7','#92400E'],
-            ['Bid Ongoing',3,'Active projects','bid-ongoing','#EDE9FE','#6C3FE8'],
-            ['Completed Jobs',9,'All time','completed','#D1FAE5','#065F46'],
-          ].map(([l,v,s,sp,bg,col])=>(
+            ['Bids Submitted',12,'On open briefs','bids-submitted'],
+            ['Bids Received',7,'2 awaiting review','bids-received'],
+            ['Bid Ongoing',3,'Active projects','bid-ongoing'],
+            ['Completed Jobs',9,'All time','completed'],
+          ].map(([l,v,s,sp])=>(
             <div key={l} className="stat-card" onClick={()=>setSubPage(sp)}>
               <div className="stat-label">{l}</div><div className="stat-value">{v}</div><div className="stat-sub">{s}</div>
             </div>
@@ -1226,7 +1250,7 @@ export default function Dashboard({ onLogout }) {
     <>
       <style>{styles}</style>
       <div className="dsh-wrap">
-        <Sidebar page={page} setPage={navToPage} onLogout={()=>{ if(onLogout) onLogout(); }}/>
+        <Sidebar page={page} setPage={navToPage} onLogout={handleLogout}/>
         <div className="main-content">
           <div className="top-bar">
             <div className="top-bar-left">
@@ -1244,7 +1268,9 @@ export default function Dashboard({ onLogout }) {
           {renderContent()}
         </div>
       </div>
-      {showWithdraw&&<WithdrawModal onClose={()=>setShowWithdraw(false)}/>}
+
+      {showWithdraw && <WithdrawModal onClose={()=>setShowWithdraw(false)} />}
+
       <div className={`mc-toast ${toastShow?'show':''}`}>
         <div className="mc-toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         <div><div className="mc-toast-title">Project Marked Complete!</div><div className="mc-toast-sub">{toastMsg}</div></div>
