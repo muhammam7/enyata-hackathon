@@ -32,6 +32,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/applications/**").hasRole("CREATOR")
+                        .requestMatchers("/api/creators/**").hasRole("CREATOR")
+                        .requestMatchers("/api/brands").hasRole("BRAND")
+                        .requestMatchers("/api/campaigns").hasRole("BRAND")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))

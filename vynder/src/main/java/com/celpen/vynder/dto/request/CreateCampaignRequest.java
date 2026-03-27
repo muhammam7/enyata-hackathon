@@ -1,5 +1,6 @@
 package com.celpen.vynder.dto.request;
 
+import com.celpen.vynder.model.CampaignStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,5 +15,7 @@ public class CreateCampaignRequest {
     private double budget;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
+    private CampaignStatus status;
 
 }

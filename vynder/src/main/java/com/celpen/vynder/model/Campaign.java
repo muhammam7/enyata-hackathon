@@ -1,10 +1,7 @@
 package com.celpen.vynder.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,7 +21,11 @@ public class Campaign extends AbstractEntity {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    @ManyToOne
+
+    @Enumerated(EnumType.STRING)
+    private CampaignStatus campaignStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
