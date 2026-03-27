@@ -22,6 +22,8 @@ public class Brand extends AbstractEntity {
 
     private String description;
 
+    private String logoUrl;
+
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

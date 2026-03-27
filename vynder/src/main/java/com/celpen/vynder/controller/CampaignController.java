@@ -30,13 +30,13 @@ public class CampaignController {
     }
 
     @PutMapping
-    public CampaignResponse update(@AuthenticationPrincipal User user, @RequestBody UpdateCampaignRequest request) {
-        return campaignService.update(user, request);
+    public CampaignResponse update(Long id, @AuthenticationPrincipal User user, @RequestBody UpdateCampaignRequest request) {
+        return campaignService.update(id, user, request);
     }
 
     @GetMapping
     public List<CampaignResponse> getAll(@AuthenticationPrincipal User user) {
-        return campaignService.getAll();
+        return campaignService.getAll(user);
     }
 
 }

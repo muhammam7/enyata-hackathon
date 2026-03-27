@@ -21,6 +21,8 @@ public class BrandController {
         this.brandService = brandService;
     }
 
+
+
     @PostMapping
     public BrandResponse create(@RequestBody CreateBrandRequest request) {
         return brandService.createProfile(request);

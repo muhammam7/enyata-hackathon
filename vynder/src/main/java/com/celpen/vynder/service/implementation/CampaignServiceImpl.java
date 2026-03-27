@@ -70,6 +70,7 @@ public class CampaignServiceImpl implements CampaignService {
     public List<CampaignResponse> getAll(User user) {
 
         Brand brand = null;
+
         try {
             brand = brandRepository.findByUser(user)
                     .orElseThrow(() -> new AccessDeniedException("No brand profile found for this user"));
