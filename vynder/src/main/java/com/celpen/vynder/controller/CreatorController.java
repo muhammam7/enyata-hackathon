@@ -1,14 +1,9 @@
 package com.celpen.vynder.controller;
 
 import com.celpen.vynder.dto.request.CreateCreatorRequest;
-import com.celpen.vynder.dto.request.CreatorRequest;
 import com.celpen.vynder.dto.request.UpdateCreatorRequest;
 import com.celpen.vynder.dto.response.CreatorResponse;
-import com.celpen.vynder.model.Creator;
-import com.celpen.vynder.model.User;
 import com.celpen.vynder.service.CreatorService;
-import com.celpen.vynder.service.AuthService;
-import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,11 +11,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/creators")
 @CrossOrigin(origins = "*")
-@AllArgsConstructor
 public class CreatorController {
 
 
     private final CreatorService creatorService;
+
+    public CreatorController(CreatorService creatorService) {
+        this.creatorService = creatorService;
+    }
 
     @PostMapping("/create")
     public CreatorResponse createProfile(@RequestBody CreateCreatorRequest request) {

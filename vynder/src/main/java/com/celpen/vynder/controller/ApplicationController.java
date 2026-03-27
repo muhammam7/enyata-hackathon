@@ -6,6 +6,7 @@ import com.celpen.vynder.dto.request.UpdateApplicationStatusRequest;
 import com.celpen.vynder.dto.response.ApplicationResponse;
 import com.celpen.vynder.service.ApplicationService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,10 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/applications")
 @CrossOrigin("*")
-@AllArgsConstructor
+//@RequiredArgsConstructor
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+
+    public ApplicationController(ApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
 
     @PostMapping
     public ApplicationResponse apply(@RequestBody CreateApplicationRequest request) {

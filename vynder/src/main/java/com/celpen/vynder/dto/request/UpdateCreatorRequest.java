@@ -9,8 +9,9 @@ public class UpdateCreatorRequest {
     private Long CreatorId;
 
     private String name;           // Display name
-    private String niche;          // Tech, Lifestyle, etc.
-    private int followers;         // Number of followers
-    private double engagementRate;
+    private String niche;
+
+    private String about;// Tech, Lifestyle, etc.
+
 
 }

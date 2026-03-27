@@ -1,13 +1,20 @@
 package com.celpen.vynder.service.implementation;
 
+import com.celpen.vynder.config.JwtService;
+import com.celpen.vynder.config.SecurityConfig;
+import com.celpen.vynder.config.UserDetailsServiceImpl;
 import com.celpen.vynder.dto.request.LoginRequest;
 import com.celpen.vynder.dto.request.SignupRequest;
 import com.celpen.vynder.dto.response.AuthResponse;
+import com.celpen.vynder.exception.InvalidRequestException;
 import com.celpen.vynder.model.Role;
 import com.celpen.vynder.model.User;
 import com.celpen.vynder.repo.UserRepository;
 import com.celpen.vynder.service.AuthService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +25,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-
-
+    private final AuthenticationManager authManager;
+    private final JwtService jwtService;
+    private final UserDetailsServiceImpl userDetailsService;
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final SecurityConfig securityConfig;
 
 
 
@@ -29,19 +37,19 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse signup(SignupRequest request) {
 
         if (request.getEmail() == null || request.getEmail().isEmpty()) {
-            throw new RuntimeException("Email is required");
+            throw new InvalidRequestException("Email is required");
         }
 
         if (request.getPassword() == null || request.getPassword().isEmpty()) {
-            throw new RuntimeException("Password is required");
+            throw new InvalidRequestException("Password is required");
         }
 
         if (request.getRole() == null || request.getRole().isEmpty()) {
-            throw new RuntimeException("Role is required");
+            throw new InvalidRequestException("Role is required");
         }
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new InvalidRequestException("Email already exists");
         }
         Role userRole;
 
@@ -56,11 +64,11 @@ public class AuthServiceImpl implements AuthService {
 
         }
 
-        String endodedPassword = passwordEncoder.encode(request.getPassword());
+        String encodedPassword = securityConfig.passwordEncoder().encode(request.getPassword());
 
         User user = User.builder()
                 .email(request.getEmail())
-                .password(endodedPassword)
+                .password(encodedPassword)
                 .role(userRole)
                 .build();
 
@@ -72,17 +80,17 @@ public class AuthServiceImpl implements AuthService {
 
     // Login user
     public AuthResponse login(LoginRequest request) {
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-
-        //Password Checker
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return mapToResponse(user);
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        var user = userDetailsService.loadUserByUsername(request.getEmail());
+        return AuthResponse.builder()
+                .email(user.getUsername())
+                .role(user.getAuthorities().stream()
+                        .findFirst()
+                        .map(GrantedAuthority::getAuthority)
+                        .orElse("UNKNOWN"))
+                .token(jwtService.generateToken(user))
+                .build();
     }
 
     public User getUserEntityByEmail(String email) {

@@ -1,10 +1,7 @@
 package com.celpen.vynder.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,10 +13,11 @@ public class Creator extends AbstractEntity{
 
 
 
-    private String name;           // Display name
-    private String niche;          // Tech, Lifestyle, etc.
-    private int followers;         // Number of followers
-    private double engagementRate; // Optional metric
+    private String name;
+    @Enumerated(EnumType.STRING)
+    private Niche niche;          // Tech, Lifestyle, etc.
+
+    private String about;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

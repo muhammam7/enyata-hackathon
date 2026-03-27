@@ -13,11 +13,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/campaigns")
 @CrossOrigin("*")
-@AllArgsConstructor
 public class CampaignController {
 
 
     private final CampaignService campaignService;
+
+    public CampaignController(CampaignService campaignService) {
+        this.campaignService = campaignService;
+    }
 
     @PostMapping
     public CampaignResponse create(@RequestBody CreateCampaignRequest request) {

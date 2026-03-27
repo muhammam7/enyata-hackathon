@@ -1,7 +1,6 @@
 package com.celpen.vynder.service;
 
 import com.celpen.vynder.dto.request.CreateCreatorRequest;
-import com.celpen.vynder.dto.request.CreatorRequest;
 import com.celpen.vynder.dto.request.UpdateCreatorRequest;
 import com.celpen.vynder.dto.response.CreatorResponse;
 import com.celpen.vynder.model.Creator;
@@ -12,7 +11,7 @@ import java.util.Optional;
 
 public interface CreatorService {
 
-    public CreatorResponse createProfile(CreateCreatorRequest request);
+    CreatorResponse createProfile(CreateCreatorRequest request);
 
     CreatorResponse update(UpdateCreatorRequest request);
 

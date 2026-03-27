@@ -10,9 +10,7 @@ public class CreatorResponse {
     private Long id;
     private String name;
     private String niche;
-    private int followers;
-    private double engagementRate;
 
-    private String email;
+    private String about;
 
 }

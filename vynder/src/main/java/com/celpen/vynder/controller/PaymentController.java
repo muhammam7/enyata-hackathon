@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/payments")
 @CrossOrigin("*")
-@AllArgsConstructor
 public class PaymentController {
 
-
     private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @PostMapping("/initialize")
     public AuthResponse.PaymentResponse initialize(@RequestBody InitializePaymentRequest request) {

@@ -9,7 +9,7 @@ public class CreateCreatorRequest {
 
     private String name;
     private String niche;
-    private int followers;
-    private double engagementRate;
+
+    private String about;
 
 }

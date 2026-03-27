@@ -10,6 +10,7 @@ import com.celpen.vynder.model.User;
 import com.celpen.vynder.repo.CampaignRepository;
 import com.celpen.vynder.service.AuthService;
 import com.celpen.vynder.service.BrandService;
+import com.celpen.vynder.service.CampaignService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class CampaignServiceImpl {
+public class CampaignServiceImpl implements CampaignService {
 
     private final CampaignRepository campaignRepository;
     private final AuthService authService;

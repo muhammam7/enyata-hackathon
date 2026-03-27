@@ -12,10 +12,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/brands")
 @CrossOrigin("*")
-@AllArgsConstructor
+//@AllArgsConstructor
 public class BrandController {
 
     private final BrandService brandService;
+
+    public BrandController(BrandService brandService) {
+        this.brandService = brandService;
+    }
 
     @PostMapping
     public BrandResponse create(@RequestBody CreateBrandRequest request) {
